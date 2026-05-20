@@ -1,0 +1,582 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use App\Models\MstPage;
+use App\Models\MstDepartment;
+use Illuminate\Validation\Rules\Password;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\UserToken;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use App\Mail\UserRegisteredMail;
+use App\Mail\UserRegistrationConfirmationMail;
+use Illuminate\Support\Facades\Mail;
+
+class AuthController extends Controller
+{
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+    #[OA\Post(
+        path: "/api/register",
+        tags: ["Auth"],
+        summary: "Register user baru",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["username", "email", "password", "password_confirmation"],
+                properties: [
+                    new OA\Property(property: "username", type: "string", example: "john_doe"),
+                    new OA\Property(property: "email", type: "string", example: "john@mail.com"),
+                    new OA\Property(property: "password", type: "string", example: "Password123!"),
+                    new OA\Property(property: "password_confirmation", type: "string", example: "Password123!")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Success / Validation error"),
+            new OA\Response(response: 500, description: "Server error")
+        ]
+    )]
+    public function register(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $existingUsernames = User::all()->map(function ($user) {
+                try {
+                    return encrypt_decrypt_db('dec', $user->username, $user->id);
+                } catch (\Throwable $e) {
+                    return null;
+                }
+            })->filter();
+
+            if ($existingUsernames->contains($request->username)) {
+                return response()->json([
+                    'code' => 400,
+                    'status' => 'error_validation',
+                    'message' => 'The username has already been taken.',
+                    'data' => [
+                        'username' => ['The username has already been taken.']
+                    ]
+                ], 200);
+            }
+
+            // ===== TAMBAHKAN DI SINI (VALIDASI EMAIL) =====
+            $existingEmails = User::all()->map(function ($user) {
+                try {
+                    return encrypt_decrypt_db('dec', $user->email, $user->id);
+                } catch (\Throwable $e) {
+                    return null;
+                }
+            })->filter();
+
+            if ($existingEmails->contains($request->email)) {
+                return response()->json([
+                    'code' => 400,
+                    'status' => 'error_validation',
+                    'message' => 'The email has already been taken.',
+                    'data' => [
+                        'email' => ['The email has already been taken.']
+                    ]
+                ], 200);
+            }
+
+            // Get active email domains from database
+            $activeDomains = \App\Models\MstEmailDomain::getActiveDomains();
+
+            if (empty($activeDomains)) {
+                return response()->json([
+                    'code' => 500,
+                    'status' => 'error',
+                    'message' => 'Tidak ada domain email yang aktif. Hubungi administrator.',
+                    'data' => []
+                ], 200);
+            }
+
+            // Create domain pattern for validation (e.g., @kbn.co.id|@gmail.com)
+            $domainPattern = implode('|', array_map(function($domain) {
+                return preg_quote($domain, '/');
+            }, $activeDomains));
+
+            // Validate email domain dynamically
+            $emailDomain = null;
+            if ($request->has('email')) {
+                $emailParts = explode('@', $request->email);
+                if (count($emailParts) === 2) {
+                    $emailDomain = strtolower($emailParts[1]);
+                }
+            }
+
+            if (!in_array($emailDomain, $activeDomains)) {
+                $allowedDomainsStr = implode(', @', $activeDomains);
+                return response()->json([
+                    'code' => 400,
+                    'status' => 'error_validation',
+                    'message' => 'Domain email tidak diizinkan.',
+                    'data' => [
+                        'email' => ["Maaf, gunakan email dengan domain: @{$allowedDomainsStr} untuk proses register."]
+                    ]
+                ], 200);
+            }
+
+            $array_validation = [
+                // 'email' => 'required|string|email:rfc,dns|max:255|unique:users',
+                'email' => 'required|string|email:rfc,dns|max:255',
+                'username' => 'required|string|max:100',
+                'password' => [
+                    'required',
+                    'string',
+                    'confirmed',
+                    Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(),
+                ],
+            ];
+
+            $validation = check_validation($request->all(), $array_validation);
+            if ($validation[0] != 0) {
+                return $validation[1];
+            }
+
+            $name = $request['username'];
+            $profile_img = 'default.png';
+            $role_id = 5;
+            $department_id = 1;
+            $fbtk = 'FBTK-' . strtoupper(Str::random(10));
+
+            $user = $this->user::create([
+                'name' => $name,
+                'email' => $request['email'],
+                'username' => $request['username'],
+                'password' => bcrypt($request['password']),
+                'profile_img' => $profile_img,
+                'role_id' => $role_id,
+                'jtkn' => '',
+                'fbtk' => $fbtk,
+                'department_id' => $department_id,
+                'status' => 0,
+            ]);
+
+            User::where('id', $user->id)->update([
+                'email' => DB::raw(encrypt_decrypt_db('enc', $request['email'], $user->id)),
+                'name' => DB::raw(encrypt_decrypt_db('enc', $name, $user->id)),
+                'username' => DB::raw(encrypt_decrypt_db('enc', $request['username'], $user->id)),
+            ]);
+
+            // ========== KIRIM EMAIL SEBELUM COMMIT ==========
+            $userDataForEmail = (object)[
+                'id' => $user->id,
+                'name' => $name,
+                'username' => $request->username,
+                'email' => $request->email,
+                'created_at' => $user->created_at,
+            ];
+
+            // Kirim email ke user yang baru register
+            try {
+                Mail::to($request->email)->send(new UserRegistrationConfirmationMail($userDataForEmail));
+            } catch (\Throwable $e) {
+                \Log::error("Failed to send email to user {$request->email}: " . $e->getMessage());
+            }
+
+            // Kirim email ke admin dengan role_id 1 saja
+            $admins = User::where('role_id', 1)
+                        ->where('status', 1)
+                        ->get();
+
+            foreach ($admins as $admin) {
+                try {
+                    $adminEmail = encrypt_decrypt_db('dec', $admin->email, $admin->id);
+
+                    // Validasi email admin sebelum mengirim
+                    if (!empty($adminEmail) && filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+                        Mail::to($adminEmail)->send(new UserRegisteredMail($userDataForEmail));
+                    } else {
+                        \Log::warning("Invalid admin email for user ID: {$admin->id}");
+                    }
+                } catch (\Throwable $e) {
+                    // Log error tapi jangan stop proses registrasi
+                    \Log::error("Failed to send email to admin ID {$admin->id}: " . $e->getMessage());
+                }
+            }
+
+            DB::commit();
+
+            return json(200, 'true', 'success', 'Akun berhasil didaftarkan. Menunggu persetujuan admin.', [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $name,
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'role_id' => $user->role_id,
+                    'role_name' => optional($user->role)->name,
+                    'status' => $user->status,
+                    'profile_img' => $user->profile_img,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return json(500, 'false', 'register_failed', $e->getMessage(), []);
+        }
+    }
+
+    #[OA\Post(
+        path: "/api/login",
+        tags: ["Auth"],
+        summary: "Login user",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["username", "password"],
+                properties: [
+                    new OA\Property(property: "username", type: "string", example: "john / john@mail.com"),
+                    new OA\Property(property: "password", type: "string", example: "Password123!")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Login success"),
+            new OA\Response(response: 401, description: "Unauthorized"),
+            new OA\Response(response: 500, description: "Server error")
+        ]
+    )]
+    public function login(Request $request)
+    {
+        $array_validation = [
+            'username' => 'required|string',
+            'password' => 'required',
+        ];
+
+            if (check_validation($request->all(), $array_validation)[0] != 0) {
+                return check_validation($request->all(), $array_validation)[1];
+            }
+
+        try {
+            // Ambil user ID berdasarkan pencocokan username/email terenkripsi langsung dari database
+            $input = $request->username;
+
+            $user = DB::table('users')
+                ->whereRaw("AES_DECRYPT(username, CONCAT('SM', id)) = ?", [$input])
+                ->orWhereRaw("AES_DECRYPT(email, CONCAT('SM', id)) = ?", [$input])
+                ->first();
+
+            if (!$user) {
+                return json(200, 'false', 'Login Gagal', 'Username/email tidak ditemukan.', []);
+            }
+
+            $user = User::find($user->id); // Ambil model aslinya agar bisa pakai relasi dll
+
+            // Status user
+            if ($user->status == 0) {
+                return json(200, 'false', 'Login Ditolak', 'Akun Anda belum disetujui oleh superadmin.', []);
+            }
+
+            if ($user->status == 2) {
+                return json(200, 'false', 'Login Ditolak', 'Pendaftaran Akun Anda ditolak.', []);
+            }
+
+            // Cek password
+            if (!Hash::check($request->password, $user->password)) {
+                return json(200, 'false', 'Login Gagal', 'Username/email atau password salah.', []);
+            }
+
+            // Generate token
+            $token = JWTAuth::fromUser($user);
+            // $user->jtkn = $token;
+            // $user->save();
+
+            // Dekripsi data user
+            $decryptedName = encrypt_decrypt_db('dec', $user->name, $user->id);
+            $decryptedUsername = encrypt_decrypt_db('dec', $user->username, $user->id);
+            $decryptedEmail = encrypt_decrypt_db('dec', $user->email, $user->id);
+            $decryptedNip = $user->nip ? encrypt_decrypt_db('dec', $user->nip, $user->id) : null;
+            $decryptedPhone = $user->phone_number ? encrypt_decrypt_db('dec', $user->phone_number, $user->id) : null;
+
+            $user->load('role');
+
+            return json(200, 'true', 'Login Berhasil', 'Selamat datang!', [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $decryptedName,
+                    'username' => $decryptedUsername,
+                    'email' => $decryptedEmail,
+                    'email_verified_at' => $user->email_verified_at,
+                    'status' => $user->status,
+                    'profile_img' => $user->profile_img ?? "",
+                    'department_id' => $user->department_id,
+                    'department_name' => optional($user->department)->name ?? '-',
+                    // 'jtkn' => $user->jtkn,
+                    // 'fbtk' => $user->fbtk,
+                    'role_id' => $user->role_id,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                    'nip' => $decryptedNip,
+                    'phone_number' => $decryptedPhone,
+                    'gender' => $user->gender,
+                    'photo' => $user->photo,
+                    'role_name' => optional($user->role)->name,
+                    'role' => $user->role ? [
+                        'id' => $user->role->id,
+                        'name' => $user->role->name,
+                        'status' => $user->role->status,
+                        'created_by' => $user->role->created_by,
+                        'created_at' => $user->role->created_at,
+                        'updated_at' => $user->role->updated_at,
+                    ] : null,
+                ],
+                'access_token' => [
+                    'token' => $token,
+                    'type' => 'Bearer',
+                    'expires_in' => JWTAuth::factory()->getTTL() * 60,
+                ],
+                // 'jtkn' => $user->jtkn,
+                // 'fbtk' => $user->fbtk,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Login error: " . $e->getMessage());
+            return json(500, 'false', 'Login Error', 'Terjadi kesalahan saat login.', []);
+        }
+
+    }
+
+        #[OA\Post(
+        path: "/api/logout",
+        tags: ["Auth"],
+        summary: "Logout user",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Logout success"),
+            new OA\Response(response: 500, description: "Server error")
+        ]
+    )]
+    public function logout(Request $request)
+    {
+        $token = JWTAuth::getToken();
+
+        try {
+            $invalidate = JWTAuth::invalidate($token);
+        } catch (\Throwable $th) {
+            $invalidate = true;
+        }
+
+        if ($invalidate) {
+            return json(200, 'true', 'success', 'Berhasil logged out', []);
+        }
+    }
+
+    #[OA\Post(
+        path: "/api/change-password",
+        tags: ["Auth"],
+        summary: "Change password user",
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["old_password", "new_password", "confirm_password"],
+                properties: [
+                    new OA\Property(property: "old_password", type: "string"),
+                    new OA\Property(property: "new_password", type: "string"),
+                    new OA\Property(property: "confirm_password", type: "string")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Success"),
+            new OA\Response(response: 400, description: "Validation error")
+        ]
+    )]
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $rules = [
+                'old_password' => 'required',
+                'new_password' => 'required|min:6',
+                'confirm_password' => 'required|same:new_password',
+            ];
+
+            $validate = check_validation($request->all(), $rules);
+            if ($validate[0]) {
+                return $validate[1];
+            }
+
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json([
+                    'code' => 400,
+                    'status' => 'error_validation',
+                    'message' => 'Password lama salah.',
+                    'data' => [
+                        'old_password' => ['Password lama salah.']
+                    ]
+                ], 200);
+            }
+
+            $user->password = bcrypt($request->new_password);
+            $user->save();
+
+            return json(200, 'true', 'success', 'Password berhasil diubah.', []);
+        } catch (\Throwable $th) {
+            return json(500, 'error', 'Terjadi kesalahan sistem', $th->getMessage(), []);
+        }
+    }
+
+    #[OA\Get(
+        path: "/api/check-token",
+        tags: ["Auth"],
+        summary: "Check JWT token validity",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Token valid"),
+            new OA\Response(response: 401, description: "Token invalid")
+        ]
+    )]
+
+    public function checkToken(Request $request)
+    {
+        try {
+            // Cek apakah token ada di Bearer header
+            $token = JWTAuth::getToken();
+            if (!$token) {
+                return json(401, false, 'token_absent', 'Token tidak ditemukan di Bearer header', []);
+            }
+
+            // Validasi header asdp secara langsung
+        if (!$request->header('asdp')) {
+            return json(200, true, 'success_validation', 'Token sudah terisi dengan benar dan masih aktif', []);
+        }
+
+        // Ambil header asdp
+        $asdp = $request->header('asdp');
+
+            // Validasi security token
+            if (check_security($asdp, $token) == 0) {
+                return json(401, false, 'invalid_token', 'Token tidak valid', [
+                    'message' => 'Token yang diberikan tidak valid atau telah kadaluwarsa'
+                ]);
+            }
+
+            // Validasi user dari token
+            $user = auth()->user();
+            if (!$user) {
+                return json(401, false, 'unauthorized', 'Token tidak valid atau kadaluwarsa', []);
+            }
+
+            // Load relasi yang diperlukan
+            $user->load(['role.pages', 'departments']);
+
+            // Return response sukses dengan data user
+            return json(200, true, 'success', 'Token sudah terisi dengan benar dan masih aktif', [
+
+                'user' => [
+                    'id' => encrypt_decrypt_md5('enc', $user->id),
+                    'name' => encrypt_decrypt_db('dec', $user->name, $user->id),
+                    'username' => encrypt_decrypt_db('dec', $user->username, $user->id),
+                    'email' => encrypt_decrypt_db('dec', $user->email, $user->id),
+                    'jtkn' => $user->jtkn,
+                    'fbtk' => $user->fbtk,
+                    'role' => [
+                        'id' => $user->role->id ?? null,
+                        'name' => $user->role->name ?? null,
+                    ],
+                    'pages' => $user->role?->pages->map(function ($page) {
+                        return [
+                            'id' => $page->id,
+                            'name' => $page->name,
+                            'head_url' => $page->head_url,
+                        ];
+                    }) ?? [],
+                    'departments' => $user->departments->map(function ($dept) {
+                        return [
+                            'id' => $dept->id,
+                            'name' => $dept->name,
+                        ];
+                    }) ?? [],
+                ],
+                'token_info' => [
+                    'status' => 'valid',
+                    'checked_at' => now()->toDateTimeString()
+                ]
+            ]);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return json(401, false, 'token_expired', 'Token telah kadaluwarsa', []);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return json(401, false, 'token_invalid', 'Token tidak valid', []);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return json(401, false, 'token_absent', 'Token tidak ditemukan', []);
+        } catch (\Exception $e) {
+            return json(500, false, 'server_error', 'Terjadi kesalahan sistem', [
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+            ]);
+        }
+    }
+
+    #[OA\Get(
+        path: "/api/profile",
+        tags: ["Auth"],
+        summary: "Get user profile",
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success"),
+            new OA\Response(response: 401, description: "Unauthorized")
+        ]
+    )]
+    public function profile(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return json(401, false, 'unauthorized', 'User tidak ditemukan / token tidak valid', []);
+            }
+
+            $user->load(['role.pages', 'departments']);
+
+            return json(200, true, 'success', 'Data profil berhasil diambil', [
+                'user' => [
+                    'id' => encrypt_decrypt_md5('enc', $user->id),
+                    'name' => encrypt_decrypt_db('dec', $user->name, $user->id),
+                    'username' => encrypt_decrypt_db('dec', $user->username, $user->id),
+                    'email' => encrypt_decrypt_db('dec', $user->email, $user->id),
+                    'jtkn' => $user->jtkn,
+                    'fbtk' => $user->fbtk,
+                    'role' => [
+                        'id' => $user->role->id ?? null,
+                        'name' => $user->role->name ?? null,
+                    ],
+                    'pages' => $user->role?->pages?->map(function ($page) {
+                        return [
+                            'id' => $page->id,
+                            'name' => $page->name,
+                            'head_url' => $page->head_url,
+                        ];
+                    }) ?? [],
+                    'departments' => $user->departments?->map(function ($dept) {
+                        return [
+                            'id' => $dept->id,
+                            'name' => $dept->name,
+                        ];
+                    }) ?? [],
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return json(500, false, 'server_error', 'Gagal mengambil profil user', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+        }
+    }
+
+}
+
