@@ -49,7 +49,7 @@ class MstJabatan extends Model
      */
     public function approvalFlows()
     {
-        return $this->hasMany(MstJabatanApproval::class, 'jabatan_id');
+        return $this->hasMany(MstJabatanApproval::class, 'target_jabatan_id');
     }
 
     /**
