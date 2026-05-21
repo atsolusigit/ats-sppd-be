@@ -98,7 +98,9 @@ class SppdController extends Controller
 
         $query = TrSppd::with([
             'requester',
-            'peserta'
+            'peserta',
+            'peserta.transportasi',
+            'peserta.penginapan'
         ]);
 
         /*
@@ -110,11 +112,7 @@ class SppdController extends Controller
         if (!$user->hasPermission('sppd.view.all')) {
 
             $query->whereHas('requester', function ($q) use ($user) {
-
-                $q->where(
-                    'division_id',
-                    $user->division_id
-                );
+                $q->where('division_id', $user->division_id);
             });
         }
 
@@ -146,17 +144,82 @@ class SppdController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | SORTING (optional tapi bagus)
+        |--------------------------------------------------------------------------
+        */
+        $query->latest('id');
+
+        /*
+        |--------------------------------------------------------------------------
         | PAGINATION
         |--------------------------------------------------------------------------
         */
 
-        $data = $query->paginate(
+        $paginated = $query->paginate(
             $request->get('per_page', 10)
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT COLLECTION (clean response)
+        |--------------------------------------------------------------------------
+        */
+
+        $collection = $paginated->getCollection()->map(function ($item) {
+
+            return [
+                'id' => $item->id,
+                'sppd_number' => $item->sppd_number,
+                'jenis_dokumen' => $item->jenis_dokumen,
+                'jenis_perjalanan' => $item->jenis_perjalanan,
+                'cost_center' => $item->cost_center,
+                'kegiatan' => $item->kegiatan,
+                'ringkasan_agenda' => $item->ringkasan_agenda,
+                'approval_status' => $item->approval_status,
+                'grand_total' => $item->grand_total,
+                'created_at' => $item->created_at,
+
+                'requester' => $item->requester ? [
+                    'id' => $item->requester->id,
+                    'name' => encrypt_decrypt_db('dec', $item->requester->name, $item->requester->id),
+                ] : null,
+
+                'peserta' => $item->peserta->map(function ($p) {
+
+                    return [
+                        'id' => $p->id,
+                        'nama' => $p->nama,
+                        'nip' => $p->nip,
+                        'jabatan' => $p->jabatan,
+                        'kota_asal' => $p->kota_asal,
+                        'kota_tujuan' => $p->kota_tujuan,
+                        'dari_tanggal' => $p->dari_tanggal,
+                        'sampai_tanggal' => $p->sampai_tanggal,
+
+                        'transportasi' => $p->transportasi ?? null,
+                        'penginapan' => $p->penginapan ?? null,
+                    ];
+                }),
+            ];
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSE
+        |--------------------------------------------------------------------------
+        */
+
         return response()->json([
             'status' => true,
-            'data' => $data
+
+            'pagination' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+            ],
+
+            'data' => $collection
         ]);
     }
     /**
