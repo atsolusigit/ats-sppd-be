@@ -1,0 +1,110 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - development
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # - name: SSH check var
+      #   run: |
+      #     echo ${{ vars.JUMP_HOST }}
+      #     echo ${{ vars.JUMP_PORT }}
+      #     echo ${{ vars.JUMP_USER }}
+
+      # - name: Deploy via Jump Host using Action
+      #   if: github.ref == 'refs/heads/main'
+      #   uses: appleboy/ssh-action@v1.2.4
+      #   with:
+      #     host: ${{ vars.SSH_HOST }}
+      #     username: ${{ vars.SSH_USER }}
+      #     port: ${{ vars.SSH_PORT }}
+      #     password: ${{ secrets.SSH_PASSWORD}}
+      #     proxy_host: ${{ vars.JUMP_HOST }}
+      #     proxy_username: ${{ vars.JUMP_USER }}
+      #     proxy_port: ${{ vars.JUMP_PORT }}
+      #     proxy_key: ${{ secrets.JUMPHOST_PRIVATE_KEY }}
+      #     script: |
+      #       echo 'Connected'
+      #       REPO_DIR=/opt/kpl-semesta-be
+      #       BRANCH=main
+      #       PAT=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      #       echo Updating repo in $REPO_DIR
+      #       if [ ! -d $REPO_DIR/.git ]; then
+      #         echo 'Empty git'
+      #       else
+      #         echo 'Starting Deploy...'
+      #         cd $REPO_DIR
+      #         AUTH_URL="https://$PAT@github.com/atsolusigit/kpl-semesta-be.git"
+      #         echo $AUTH_URL
+      #         git remote set-url origin $AUTH_URL
+      #         # git pull origin $BRANCH
+      #         git fetch origin
+      #         # git checkout $BRANCH || true
+      #         git reset --hard origin/$BRANCH 
+      #         echo 'Restart Docker'
+      #         sudo docker-compose down
+      #         sudo docker-compose up -d --build
+      #         echo 'Run migration'
+      #         sudo docker exec -i kpl-semesta-be_app_1 php artisan migrate --force
+      #         echo 'Done deploy.'
+      #       fi
+      - name : Deploy via SSH
+        if: github.ref == 'refs/heads/development'
+        uses: appleboy/ssh-action@v1.2.4
+        with:
+          host: ${{ vars.SSH_HOST_ATS }}
+          username: ${{ vars.SSH_USER_ATS }}
+          port: ${{ vars.SSH_PORT_ATS }}
+          password: ${{ secrets.SSH_PASSWORD_ATS }}
+          script: |
+            echo "Connected"
+
+            REPO_DIR=/var/www/html/kpl-sppd-be
+            BRANCH=development
+            PAT=${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+            echo "Updating repo in $REPO_DIR"
+
+            if [ ! -d "$REPO_DIR/.git" ]; then
+              echo "Repository not found"
+              exit 1
+            else
+              echo "Starting Deploy..."
+              cd $REPO_DIR
+
+              AUTH_URL="https://$PAT@github.com/atsolusigit/kpl-sppd-be.git"
+
+              git remote set-url origin $AUTH_URL
+              git fetch origin
+              git reset --hard origin/$BRANCH
+
+              echo "Clear all Laravel caches (SAFE RESET)"
+              php artisan optimize:clear
+
+              echo "Install dependency"
+              composer install --no-dev --optimize-autoloader
+
+              echo "Run Laravel commands"
+              php artisan migrate --force
+              
+              echo "Rebuild caches"
+              php artisan config:cache
+              php artisan route:cache
+              php artisan view:cache
+
+              echo "Fix permission"
+              chmod -R 775 storage
+              chmod -R 775 bootstrap/cache
+
+              echo "Deploy selesai"
+            fi

@@ -5,34 +5,351 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\MstJabatanApproval;
 use OpenApi\Attributes as OA;
+use App\Traits\HasDynamicFilter;
 
 class JabatanApprovalController extends Controller
 {
+    use HasDynamicFilter;
     #[OA\Get(
-        path: "/api/jabatan-approvals",
-        tags: ["Jabatan Approval"],
-        summary: "Get all jabatan approvals",
+        path: "/api/mst-jabatan-approvals",
+        tags: ["Master Jabatan Approval"],
+        summary: "Get list jabatan approval",
         security: [["bearerAuth" => []]],
+
+        parameters: [
+
+            new OA\Parameter(
+                name: "id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 1
+            ),
+
+            new OA\Parameter(
+                name: "approval_flow_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 1
+            ),
+
+            new OA\Parameter(
+                name: "approval_order",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 1
+            ),
+
+            new OA\Parameter(
+                name: "approval_mode",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(
+                    type: "string",
+                    enum: [
+                        "hierarchy",
+                        "jabatan",
+                        "department",
+                        "role",
+                        "user"
+                    ]
+                ),
+                example: "hierarchy"
+            ),
+
+            new OA\Parameter(
+                name: "target_level",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 2
+            ),
+
+            new OA\Parameter(
+                name: "target_jabatan_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 3
+            ),
+
+            new OA\Parameter(
+                name: "target_department_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 1
+            ),
+
+            new OA\Parameter(
+                name: "target_role_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 1
+            ),
+
+            new OA\Parameter(
+                name: "target_user_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 10
+            ),
+
+            new OA\Parameter(
+                name: "is_required",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "boolean"),
+                example: true
+            ),
+
+            new OA\Parameter(
+                name: "page",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 1
+            ),
+
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                example: 10
+            ),
+
+            new OA\Parameter(
+                name: "sort_by",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string"),
+                example: "approval_order"
+            ),
+
+            new OA\Parameter(
+                name: "sort_dir",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(
+                    type: "string",
+                    enum: ["asc", "desc"]
+                ),
+                example: "asc"
+            ),
+        ],
+
         responses: [
+
             new OA\Response(
                 response: 200,
-                description: "Success"
+                description: "Success",
+
+                content: new OA\JsonContent(
+
+                    properties: [
+
+                        new OA\Property(
+                            property: "status",
+                            type: "boolean",
+                            example: true
+                        ),
+
+                        new OA\Property(
+                            property: "message",
+                            type: "string",
+                            example: "Jabatan approvals fetched successfully"
+                        ),
+
+                        new OA\Property(
+                            property: "pagination",
+                            properties: [
+
+                                new OA\Property(
+                                    property: "current_page",
+                                    type: "integer",
+                                    example: 1
+                                ),
+
+                                new OA\Property(
+                                    property: "last_page",
+                                    type: "integer",
+                                    example: 5
+                                ),
+
+                                new OA\Property(
+                                    property: "per_page",
+                                    type: "integer",
+                                    example: 10
+                                ),
+
+                                new OA\Property(
+                                    property: "total",
+                                    type: "integer",
+                                    example: 50
+                                ),
+                            ],
+                            type: "object"
+                        ),
+
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+
+                            items: new OA\Items(
+
+                                properties: [
+
+                                    new OA\Property(
+                                        property: "id",
+                                        type: "integer",
+                                        example: 1
+                                    ),
+
+                                    new OA\Property(
+                                        property: "approval_flow_id",
+                                        type: "integer",
+                                        example: 1
+                                    ),
+
+                                    new OA\Property(
+                                        property: "approval_order",
+                                        type: "integer",
+                                        example: 1
+                                    ),
+
+                                    new OA\Property(
+                                        property: "approval_mode",
+                                        type: "string",
+                                        example: "hierarchy"
+                                    ),
+
+                                    new OA\Property(
+                                        property: "target_level",
+                                        type: "integer",
+                                        nullable: true,
+                                        example: 2
+                                    ),
+
+                                    new OA\Property(
+                                        property: "target_jabatan_id",
+                                        type: "integer",
+                                        nullable: true,
+                                        example: 3
+                                    ),
+
+                                    new OA\Property(
+                                        property: "target_department_id",
+                                        type: "integer",
+                                        nullable: true,
+                                        example: 1
+                                    ),
+
+                                    new OA\Property(
+                                        property: "target_role_id",
+                                        type: "integer",
+                                        nullable: true,
+                                        example: 1
+                                    ),
+
+                                    new OA\Property(
+                                        property: "target_user_id",
+                                        type: "integer",
+                                        nullable: true,
+                                        example: 10
+                                    ),
+
+                                    new OA\Property(
+                                        property: "is_required",
+                                        type: "boolean",
+                                        example: true
+                                    ),
+
+                                    new OA\Property(
+                                        property: "can_reject",
+                                        type: "boolean",
+                                        example: true
+                                    ),
+
+                                    new OA\Property(
+                                        property: "can_revision",
+                                        type: "boolean",
+                                        example: true
+                                    ),
+
+                                    new OA\Property(
+                                        property: "created_at",
+                                        type: "string",
+                                        example: "2026-05-21T10:00:00.000000Z"
+                                    ),
+
+                                    new OA\Property(
+                                        property: "updated_at",
+                                        type: "string",
+                                        example: "2026-05-21T10:00:00.000000Z"
+                                    ),
+
+                                ]
+                            )
+                        )
+                    ]
+                )
             )
         ]
-    )]
-    public function index()
+)]
+
+    public function index(Request $request)
     {
-        $data = MstJabatanApproval::with([
+        $query = MstJabatanApproval::with([
             'flow',
-            'jabatan'
-        ])
-        ->ordered()
-        ->get();
+            'targetJabatan',
+            'targetDepartment',
+            'targetRole',
+            'targetUser',
+        ]);
+
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            [
+                'id',
+                'approval_flow_id',
+                'approval_order',
+                'approval_mode',
+                'target_level',
+                'target_jabatan_id',
+                'target_department_id',
+                'target_role_id',
+                'target_user_id',
+                'is_required',
+            ],
+            []
+        );
+
+        $sortBy = $request->get('sort_by', 'approval_order');
+        $sortDir = $request->get('sort_dir', 'asc');
+
+        $query->orderBy($sortBy, $sortDir);
+        $data = $query->paginate(
+            $request->get('per_page', 10)
+        );
 
         return response()->json([
             'status' => true,
             'message' => 'Jabatan approvals fetched successfully',
-            'data' => $data
+
+            'pagination' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+            ],
+
+            'data' => $data->items(),
         ]);
     }
 
@@ -65,7 +382,7 @@ class JabatanApprovalController extends Controller
     {
         $data = MstJabatanApproval::with([
             'flow',
-            'jabatan'
+            'targetJabatan'
         ])->find($id);
 
         if (!$data) {
@@ -93,12 +410,12 @@ class JabatanApprovalController extends Controller
                 required: [
                     "jabatan_id",
                     "approval_flow_id",
-                    "approval_level"
+                    "approval_order"
                 ],
                 properties: [
                     new OA\Property(property: "jabatan_id", type: "integer", example: 1),
                     new OA\Property(property: "approval_flow_id", type: "integer", example: 1),
-                    new OA\Property(property: "approval_level", type: "integer", example: 1),
+                    new OA\Property(property: "approval_order", type: "integer", example: 1),
                 ]
             )
         ),
@@ -114,12 +431,12 @@ class JabatanApprovalController extends Controller
         $request->validate([
             'jabatan_id' => 'required|exists:mst_jabatans,id',
             'approval_flow_id' => 'required|exists:mst_approval_flows,id',
-            'approval_level' => 'required|integer|min:1',
+            'approval_order' => 'required|integer|min:1',
         ]);
 
         $exists = MstJabatanApproval::where('approval_flow_id', $request->approval_flow_id)
             ->where('jabatan_id', $request->jabatan_id)
-            ->where('approval_level', $request->approval_level)
+            ->where('approval_order', $request->approval_order)
             ->exists();
 
         if ($exists) {
@@ -132,7 +449,7 @@ class JabatanApprovalController extends Controller
         $data = MstJabatanApproval::create([
             'jabatan_id' => $request->jabatan_id,
             'approval_flow_id' => $request->approval_flow_id,
-            'approval_level' => $request->approval_level,
+            'approval_order' => $request->approval_order,
         ]);
 
         return response()->json([
@@ -162,7 +479,7 @@ class JabatanApprovalController extends Controller
                 properties: [
                     new OA\Property(property: "jabatan_id", type: "integer"),
                     new OA\Property(property: "approval_flow_id", type: "integer"),
-                    new OA\Property(property: "approval_level", type: "integer"),
+                    new OA\Property(property: "approval_order", type: "integer"),
                 ]
             )
         ),
@@ -187,13 +504,13 @@ class JabatanApprovalController extends Controller
         $request->validate([
             'jabatan_id' => 'required|exists:mst_jabatans,id',
             'approval_flow_id' => 'required|exists:mst_approval_flows,id',
-            'approval_level' => 'required|integer|min:1',
+            'approval_order' => 'required|integer|min:1',
         ]);
 
         $data->update([
             'jabatan_id' => $request->jabatan_id,
             'approval_flow_id' => $request->approval_flow_id,
-            'approval_level' => $request->approval_level,
+            'approval_order' => $request->approval_order,
         ]);
 
         return response()->json([
