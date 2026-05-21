@@ -69,7 +69,7 @@ jobs:
           script: |
             echo "Connected"
 
-            REPO_DIR=/var/www/html/kpl-sppd-be
+            REPO_DIR=/var/www/html/development_sppd_be
             BRANCH=development
             PAT=${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
