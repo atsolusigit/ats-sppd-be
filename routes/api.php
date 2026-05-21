@@ -10,6 +10,7 @@ use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\ApprovalFlowController;
 use App\Http\Controllers\JabatanApprovalController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SppdController;
 
 // ============================
 //  Auth Routes (tanpa token)
@@ -228,4 +229,26 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])
         ->middleware('permission:user.view');
+});
+
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::get(
+        '/sppd',[SppdController::class, 'index']
+    )->middleware('permission:sppd.view');
+
+    Route::get('/sppd/{id}',[SppdController::class, 'show']
+    )->middleware('permission:sppd.view');
+
+    Route::post('/sppd',[SppdController::class, 'store']
+    )->middleware('permission:sppd.create');
+
+    Route::put('/sppd/{id}',[SppdController::class, 'update']
+    )->middleware('permission:sppd.update');
+
+    Route::delete('/sppd/{id}',
+        [SppdController::class, 'destroy']
+    )->middleware('permission:sppd.delete');
+
 });

@@ -106,5 +106,8 @@ jobs:
               chmod -R 775 storage
               chmod -R 775 bootstrap/cache
 
+              echo "Restarting sppd-be service..."
+              sudo systemctl restart sppd-be.service
+
               echo "Deploy selesai"
             fi
