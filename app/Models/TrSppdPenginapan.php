@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TrSppdPenginapan extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $table = 'td_sppd_accommodations';
 

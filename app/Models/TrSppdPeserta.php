@@ -13,17 +13,15 @@ class TrSppdPeserta extends Model
 
     protected $fillable = [
         'sppd_id',
-
+        'user_id',
         'nama',
         'nip',
         'jabatan',
-
         'kota_asal',
         'kota_tujuan',
-
+        'tempat_sppd',
         'dari_tanggal',
         'sampai_tanggal',
-
         'total_transport',
         'total_accommodation',
         'total_estimation',

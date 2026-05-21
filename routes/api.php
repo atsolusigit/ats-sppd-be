@@ -11,6 +11,7 @@ use App\Http\Controllers\ApprovalFlowController;
 use App\Http\Controllers\JabatanApprovalController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SppdController;
+use App\Http\Controllers\PermissionController;
 
 // ============================
 //  Auth Routes (tanpa token)
