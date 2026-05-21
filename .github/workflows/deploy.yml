@@ -82,7 +82,7 @@ jobs:
               echo "Starting Deploy..."
               cd $REPO_DIR
 
-              AUTH_URL="https://$PAT@github.com/atsolusigit/kpl-sppd-be.git"
+              AUTH_URL="https://$PAT@github.com/atsolusigit/ats-sppd-be.git"
 
               git remote set-url origin $AUTH_URL
               git fetch origin
