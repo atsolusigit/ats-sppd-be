@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('mst_role', function (Blueprint $table) {
+        Schema::create('mst_roles', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('code', 50)->nullable();
