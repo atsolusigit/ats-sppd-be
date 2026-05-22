@@ -2080,41 +2080,60 @@
                     {
                         "name": "search",
                         "in": "query",
+                        "description": "Search keyword",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "Meeting Jakarta"
                         }
                     },
                     {
                         "name": "approval_status",
                         "in": "query",
+                        "description": "Filter approval status",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "submitted",
+                            "enum": [
+                                "draft",
+                                "submitted",
+                                "approved",
+                                "rejected",
+                                "revision",
+                                "cancelled",
+                                "completed"
+                            ]
                         }
                     },
                     {
                         "name": "approval_flow_id",
                         "in": "query",
+                        "description": "Filter approval flow",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "integer",
+                            "example": 1
                         }
                     },
                     {
                         "name": "sort_by",
                         "in": "query",
+                        "description": "Sort field",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "created_at"
                         }
                     },
                     {
                         "name": "sort_order",
                         "in": "query",
+                        "description": "Sort order",
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "desc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -2124,9 +2143,11 @@
                     {
                         "name": "per_page",
                         "in": "query",
+                        "description": "Pagination per page",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 10
                         }
                     }
                 ],
