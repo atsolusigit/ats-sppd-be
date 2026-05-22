@@ -848,13 +848,13 @@
                 ]
             }
         },
-        "/api/mst-jabatan-approvals": {
+        "/api/jabatan-approvals": {
             "get": {
                 "tags": [
-                    "Master Jabatan Approval"
+                    "Jabatan Approval"
                 ],
                 "summary": "Get list jabatan approval",
-                "operationId": "4e7909b0e7030611b12a55e2efbfefac",
+                "operationId": "19ac2e48312e520d0ad907ac7929e016",
                 "parameters": [
                     {
                         "name": "id",
@@ -1111,6 +1111,52 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Jabatan Approval"
+                ],
+                "summary": "Create jabatan approval",
+                "operationId": "8d580b256c888f2aa4db84fd92d410e2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "jabatan_id",
+                                    "approval_flow_id",
+                                    "approval_order"
+                                ],
+                                "properties": {
+                                    "jabatan_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "approval_flow_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "approval_order": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Created"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/jabatan-approvals/{id}": {
@@ -1214,54 +1260,6 @@
                 "responses": {
                     "200": {
                         "description": "Deleted"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/jabatan-approvals": {
-            "post": {
-                "tags": [
-                    "Jabatan Approval"
-                ],
-                "summary": "Create jabatan approval",
-                "operationId": "8d580b256c888f2aa4db84fd92d410e2",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "jabatan_id",
-                                    "approval_flow_id",
-                                    "approval_order"
-                                ],
-                                "properties": {
-                                    "jabatan_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "approval_flow_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "approval_order": {
-                                        "type": "integer",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Created"
                     }
                 },
                 "security": [
@@ -3106,10 +3104,6 @@
         {
             "name": "Email Domains",
             "description": "Email Domains"
-        },
-        {
-            "name": "Master Jabatan Approval",
-            "description": "Master Jabatan Approval"
         },
         {
             "name": "Jabatan Approval",
