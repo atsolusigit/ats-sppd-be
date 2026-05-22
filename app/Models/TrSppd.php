@@ -15,13 +15,14 @@ class TrSppd extends Model
         'sppd_number',
         'jenis_dokumen',
         'cost_center',
-        'jenis_perjalanan',
+        // 'jenis_perjalanan',
         'kegiatan',
         'ringkasan_agenda',
 
         'requester_id',
 
         'approval_status',
+        'approval_flow_id',
 
         'total_transport',
         'total_accommodation',

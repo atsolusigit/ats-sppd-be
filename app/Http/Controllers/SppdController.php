@@ -7,6 +7,7 @@ use App\Models\TrSppd;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 use App\Traits\HasDynamicFilter;
+use App\Helpers\ApprovalHelper;
 
 class SppdController extends Controller
 {
@@ -37,7 +38,7 @@ class SppdController extends Controller
             ),
 
             new OA\Parameter(
-                name: "jenis_perjalanan",
+                name: "approval_flow_id",
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "string")
@@ -128,7 +129,7 @@ class SppdController extends Controller
 
             allowedFilters: [
                 'approval_status',
-                'jenis_perjalanan',
+                'approval_flow_id',
                 'jenis_dokumen',
                 'cost_center',
                 'requester_id',
@@ -171,7 +172,7 @@ class SppdController extends Controller
                 'id' => $item->id,
                 'sppd_number' => $item->sppd_number,
                 'jenis_dokumen' => $item->jenis_dokumen,
-                'jenis_perjalanan' => $item->jenis_perjalanan,
+                'approval_flow_id' => $item->approval_flow_id,
                 'cost_center' => $item->cost_center,
                 'kegiatan' => $item->kegiatan,
                 'ringkasan_agenda' => $item->ringkasan_agenda,
@@ -308,7 +309,7 @@ class SppdController extends Controller
                 required: [
                     "jenisDokumen",
                     "costCenter",
-                    "jenisPerjalanan",
+                    "approvalFlowId",
                     "kegiatan",
                     "peserta"
                 ],
@@ -323,8 +324,8 @@ class SppdController extends Controller
 
                     new OA\Property(
                         property: "jenisDokumen",
-                        type: "string",
-                        example: "SPPD Dalam Negeri"
+                        type: "bigint",
+                        example: "1"
                     ),
 
                     new OA\Property(
@@ -334,9 +335,9 @@ class SppdController extends Controller
                     ),
 
                     new OA\Property(
-                        property: "jenisPerjalanan",
-                        type: "string",
-                        example: "domestik"
+                        property: "approvalFlowId",
+                        type: "bigint",
+                        example: "1"
                     ),
 
                     new OA\Property(
@@ -602,7 +603,7 @@ class SppdController extends Controller
                 'sppd_number' => $sppdNumber,
                 'jenis_dokumen' => $request->jenisDokumen,
                 'cost_center' => $request->costCenter,
-                'jenis_perjalanan' => $request->jenisPerjalanan,
+                'approval_flow_id' => $request->jenisPerjalanan,
                 'kegiatan' => $request->kegiatan,
                 'ringkasan_agenda' => $request->ringkasanAgenda,
                 'requester_id' => auth()->id(),
@@ -677,7 +678,7 @@ class SppdController extends Controller
                 $peserta->update([
                     'total_transport' => $totalTransport,
                     'total_accommodation' => $totalPenginapan,
-                    'total_estimasion' => $totalPeserta,
+                    'total_estimation' => $totalPeserta,
                 ]);
 
                 $totalGrand += $totalPeserta;
@@ -744,9 +745,9 @@ class SppdController extends Controller
                     ),
 
                     new OA\Property(
-                        property: "jenisPerjalanan",
-                        type: "string",
-                        example: "domestik"
+                        property: "approvalFlowId",
+                        type: "bigint",
+                        example: "1"
                     ),
 
                     new OA\Property(
@@ -1038,7 +1039,7 @@ class SppdController extends Controller
             $sppd->update([
                 'jenis_dokumen' => $request->jenisDokumen,
                 'cost_center' => $request->costCenter,
-                'jenis_perjalanan' => $request->jenisPerjalanan,
+                'approval_flow_id' => $request->jenisPerjalanan,
                 'kegiatan' => $request->kegiatan,
                 'ringkasan_agenda' => $request->ringkasanAgenda,
             ]);
@@ -1253,5 +1254,168 @@ class SppdController extends Controller
             'status' => true,
             'message' => 'Deleted successfully'
         ]);
+    }
+
+    /**
+     * SUBMIT SPPD
+     */
+
+    #[OA\Post(
+        path: "/api/sppd/{id}/submit",
+        tags: ["SPPD"],
+        summary: "Submit SPPD",
+        security: [["bearerAuth" => []]],
+
+        parameters: [
+
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                required: true,
+                description: "SPPD ID",
+                schema: new OA\Schema(
+                    type: "integer"
+                )
+            ),
+        ],
+
+        responses: [
+
+            new OA\Response(
+                response: 200,
+                description: "SPPD submitted successfully",
+
+                content: new OA\JsonContent(
+
+                    properties: [
+
+                        new OA\Property(
+                            property: "status",
+                            type: "boolean",
+                            example: true
+                        ),
+
+                        new OA\Property(
+                            property: "message",
+                            type: "string",
+                            example: "SPPD submitted successfully"
+                        ),
+
+                        new OA\Property(
+                            property: "data",
+                            type: "object"
+                        ),
+                    ]
+                )
+            ),
+
+            new OA\Response(
+                response: 400,
+                description: "Invalid submit"
+            ),
+
+            new OA\Response(
+                response: 403,
+                description: "Forbidden"
+            ),
+
+            new OA\Response(
+                response: 404,
+                description: "SPPD not found"
+            ),
+        ]
+    )]
+    public function submit($id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $user = auth()->user();
+
+            $sppd = TrSppd::with([
+                'requester',
+                'approvals'
+            ])->findOrFail($id);
+
+            /*
+            |----------------------------------------
+            | VALIDASI STATUS
+            |----------------------------------------
+            */
+
+            if ($sppd->approval_status !== 'draft') {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'SPPD hanya bisa di-submit dari status draft'
+                ], 400);
+            }
+
+            /*
+            |----------------------------------------
+            | ACCESS CHECK
+            |----------------------------------------
+            */
+
+            if ($sppd->requester_id !== $user->id) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Hanya requester yang bisa submit'
+                ], 403);
+            }
+
+            /*
+            |----------------------------------------
+            | UPDATE SPPD
+            |----------------------------------------
+            */
+
+            $sppd->update([
+                'approval_status' => 'submitted',
+                'submitted_at' => now(),
+                'current_approval_level' => 1,
+            ]);
+
+            /*
+            |----------------------------------------
+            | CREATE APPROVAL LEVEL 1
+            |----------------------------------------
+            */
+
+            $created = $this->createApprovalStep(
+                sppdId: $sppd->id,
+                flowId: $sppd->approval_flow_id,
+                level: 1
+            );
+
+            if (!$created) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Approval flow level 1 tidak ditemukan'
+                ], 400);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'SPPD submitted successfully',
+                'data' => $sppd->load('approvals')
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
