@@ -11,7 +11,7 @@ class JabatanApprovalController extends Controller
 {
     use HasDynamicFilter;
     #[OA\Get(
-        path: "/api/mst-jabatan-approvals",
+        path: "/api/jabatan-approvals",
         tags: ["Master Jabatan Approval"],
         summary: "Get list jabatan approval",
         security: [["bearerAuth" => []]],
