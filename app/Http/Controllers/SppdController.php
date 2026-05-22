@@ -1381,11 +1381,11 @@ class SppdController extends Controller
             |----------------------------------------
             */
 
-            if ($sppd->requester_id !== $user->id) {
+            if ($sppd->requester_id !== $user->id && !$user->hasPermission('sppd.submit.all')) {
 
                 return response()->json([
                     'status' => false,
-                    'message' => 'Hanya requester yang bisa submit'
+                    'message' => 'Anda tidak memiliki akses submit'
                 ], 403);
             }
 
