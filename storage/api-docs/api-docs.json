@@ -2086,7 +2086,7 @@
                         }
                     },
                     {
-                        "name": "status",
+                        "name": "approval_status",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -2094,7 +2094,7 @@
                         }
                     },
                     {
-                        "name": "jenis_perjalanan",
+                        "name": "approval_flow_id",
                         "in": "query",
                         "required": false,
                         "schema": {
@@ -2172,22 +2172,22 @@
                                 "required": [
                                     "jenisDokumen",
                                     "costCenter",
-                                    "jenisPerjalanan",
+                                    "approvalFlowId",
                                     "kegiatan",
                                     "peserta"
                                 ],
                                 "properties": {
                                     "jenisDokumen": {
-                                        "type": "string",
-                                        "example": "SPPD Dalam Negeri"
+                                        "type": "bigint",
+                                        "example": "1"
                                     },
                                     "costCenter": {
                                         "type": "string",
                                         "example": "CC001"
                                     },
-                                    "jenisPerjalanan": {
-                                        "type": "string",
-                                        "example": "Dinas"
+                                    "approvalFlowId": {
+                                        "type": "bigint",
+                                        "example": "1"
                                     },
                                     "kegiatan": {
                                         "type": "string",
@@ -2431,9 +2431,9 @@
                                         "type": "string",
                                         "example": "CC001"
                                     },
-                                    "jenisPerjalanan": {
-                                        "type": "string",
-                                        "example": "domestik"
+                                    "approvalFlowId": {
+                                        "type": "bigint",
+                                        "example": "1"
                                     },
                                     "kegiatan": {
                                         "type": "string",
@@ -2653,6 +2653,66 @@
                     },
                     "404": {
                         "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sppd/{id}/submit": {
+            "post": {
+                "tags": [
+                    "SPPD"
+                ],
+                "summary": "Submit SPPD",
+                "description": "SUBMIT SPPD",
+                "operationId": "db346a967311109b81a429a25d0019a7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "SPPD ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SPPD submitted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "SPPD submitted successfully"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid submit"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "SPPD not found"
                     }
                 },
                 "security": [
