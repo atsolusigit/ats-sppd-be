@@ -27,37 +27,56 @@ class SppdController extends Controller
                 name: "search",
                 in: "query",
                 required: false,
-                schema: new OA\Schema(type: "string")
+                description: "Search keyword",
+                schema: new OA\Schema(
+                    type: "string",
+                    example: "Meeting Jakarta"
+                )
             ),
 
             new OA\Parameter(
                 name: "approval_status",
                 in: "query",
                 required: false,
-                schema: new OA\Schema(type: "string")
+                description: "Filter approval status",
+                schema: new OA\Schema(
+                    type: "string",
+                    example: "submitted",
+                    enum: ["draft","submitted","approved","rejected","revision","cancelled","completed"]
+                )
             ),
 
             new OA\Parameter(
                 name: "approval_flow_id",
                 in: "query",
                 required: false,
-                schema: new OA\Schema(type: "string")
+                description: "Filter approval flow",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
             ),
 
             new OA\Parameter(
                 name: "sort_by",
                 in: "query",
                 required: false,
-                schema: new OA\Schema(type: "string")
+                description: "Sort field",
+                schema: new OA\Schema(
+                    type: "string",
+                    example: "created_at"
+                )
             ),
 
             new OA\Parameter(
                 name: "sort_order",
                 in: "query",
                 required: false,
+                description: "Sort order",
                 schema: new OA\Schema(
                     type: "string",
-                    enum: ["asc", "desc"]
+                    enum: ["asc", "desc"],
+                    example: "desc"
                 )
             ),
 
@@ -65,7 +84,11 @@ class SppdController extends Controller
                 name: "per_page",
                 in: "query",
                 required: false,
-                schema: new OA\Schema(type: "integer")
+                description: "Pagination per page",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 10
+                )
             ),
         ],
 
