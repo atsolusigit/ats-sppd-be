@@ -24,6 +24,10 @@ class TrSppd extends Model
         'approval_status',
         'approval_flow_id',
 
+        'requester_department_id',
+        'requester_jabatan_id',
+        'department_id',
+
         'total_transport',
         'total_accommodation',
         'grand_total',
@@ -74,6 +78,21 @@ class TrSppd extends Model
         );
     }
 
+    public function approval_flow()
+    {
+        return $this->belongsTo(
+            MstApprovalFlow::class, 
+            'approval_flow_id'); 
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(
+            MstDepartment::class,
+            'department_id'
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -111,6 +130,7 @@ class TrSppd extends Model
             'rejected'
         );
     }
+    
 
     /*
     |--------------------------------------------------------------------------

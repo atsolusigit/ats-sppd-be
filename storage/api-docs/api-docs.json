@@ -2066,6 +2066,243 @@
                 ]
             }
         },
+        "/api/sppd/{id}/approval": {
+            "post": {
+                "tags": [
+                    "SPPD Approval"
+                ],
+                "summary": "Approve / Reject / Revision SPPD",
+                "description": "APPROVE / REJECT / REVISION",
+                "operationId": "8703b353ad94cd8cb723b8951dcd77c9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "SPPD ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": "approved",
+                                        "enum": [
+                                            "approved",
+                                            "rejected",
+                                            "revision"
+                                        ]
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Disetujui oleh manager",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Approval berhasil diproses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Approval berhasil diproses"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "sppd_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "approval_status": {
+                                                    "type": "string",
+                                                    "example": "approved"
+                                                },
+                                                "current_level": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "approval": {
+                                                    "properties": {
+                                                        "approval_id": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "approval_level": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "approved"
+                                                        },
+                                                        "notes": {
+                                                            "type": "string",
+                                                            "example": "Approved by manager"
+                                                        },
+                                                        "approved_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2026-05-23 10:00:00"
+                                                        },
+                                                        "approved_by": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Tidak memiliki akses approval"
+                    },
+                    "404": {
+                        "description": "Approval level tidak ditemukan"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/sppd/{id}/approval-history": {
+            "get": {
+                "tags": [
+                    "SPPD Approval"
+                ],
+                "summary": "Get Approval History SPPD",
+                "description": "GET APPROVAL HISTORY",
+                "operationId": "fee1989e6891bb0e45c5bcb8118b9252",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "SPPD ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "approval_level": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "approved"
+                                                    },
+                                                    "notes": {
+                                                        "type": "string",
+                                                        "example": "Approved by manager"
+                                                    },
+                                                    "approved_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-05-23 10:00:00"
+                                                    },
+                                                    "approver": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Bangkit"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "approver_jabatan": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Manager IT"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/sppd": {
             "get": {
                 "tags": [
@@ -2108,6 +2345,16 @@
                         "name": "approval_flow_id",
                         "in": "query",
                         "description": "Filter approval flow",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "description": "Filter department",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -2192,6 +2439,7 @@
                                     "jenisDokumen",
                                     "costCenter",
                                     "approvalFlowId",
+                                    "departmentId",
                                     "kegiatan",
                                     "peserta"
                                 ],
@@ -2205,6 +2453,10 @@
                                         "example": "CC001"
                                     },
                                     "approvalFlowId": {
+                                        "type": "bigint",
+                                        "example": "1"
+                                    },
+                                    "departmentId": {
                                         "type": "bigint",
                                         "example": "1"
                                     },
@@ -3120,6 +3372,10 @@
         {
             "name": "Permissions",
             "description": "Permissions"
+        },
+        {
+            "name": "SPPD Approval",
+            "description": "SPPD Approval"
         },
         {
             "name": "SPPD",

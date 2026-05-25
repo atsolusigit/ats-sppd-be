@@ -58,6 +58,17 @@ class SppdController extends Controller
             ),
 
             new OA\Parameter(
+                name: "department_id",
+                in: "query",
+                required: false,
+                description: "Filter department",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
+            ),
+
+            new OA\Parameter(
                 name: "sort_by",
                 in: "query",
                 required: false,
@@ -123,6 +134,7 @@ class SppdController extends Controller
         $query = TrSppd::with([
             'requester',
             'peserta',
+            'approval_flow',
             'peserta.transportasi',
             'peserta.penginapan'
         ]);
@@ -156,6 +168,7 @@ class SppdController extends Controller
                 'jenis_dokumen',
                 'cost_center',
                 'requester_id',
+                'department_id',
             ],
 
             searchableFields: [
@@ -195,17 +208,27 @@ class SppdController extends Controller
                 'id' => $item->id,
                 'sppd_number' => $item->sppd_number,
                 'jenis_dokumen' => $item->jenis_dokumen,
-                'approval_flow_id' => $item->approval_flow_id,
+                'approval_flow' => $item->approval_flow ? [
+                    'id' => $item->approval_flow->id,
+                    'name' => $item->approval_flow->name,
+                ] : null,
+                // 'approval_flow_id' => $item->approval_flow_id,
                 'cost_center' => $item->cost_center,
                 'kegiatan' => $item->kegiatan,
                 'ringkasan_agenda' => $item->ringkasan_agenda,
                 'approval_status' => $item->approval_status,
                 'grand_total' => $item->grand_total,
                 'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
 
                 'requester' => $item->requester ? [
                     'id' => $item->requester->id,
                     'name' => encrypt_decrypt_db('dec', $item->requester->name, $item->requester->id),
+                ] : null,
+                // 'department_id' => $item->department_id,
+                'department' => $item->department ? [
+                    'id' => $item->department->id,
+                    'name' => $item->department->name,
                 ] : null,
 
                 'peserta' => $item->peserta->map(function ($p) {
@@ -286,6 +309,7 @@ class SppdController extends Controller
 
         $data = TrSppd::with([
             'requester',
+            'approval_flow',
             'peserta.transportasi',
             'peserta.penginapan'
         ])->findOrFail($id);
@@ -310,7 +334,50 @@ class SppdController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $data
+            'data' => [
+                'id' => $data->id,
+                'sppd_number' => $data->sppd_number,
+                'jenis_dokumen' => $data->jenis_dokumen,
+                'approval_status' => $data->approval_status,
+                'cost_center' => $data->cost_center,
+                'kegiatan' => $data->kegiatan,
+                'ringkasan_agenda' => $data->ringkasan_agenda,
+                'grand_total' => $data->grand_total,
+                'submitted_at' => $data->submitted_at,
+                'created_at' => $data->created_at,
+
+                'approval_flow' => $data->approvalFlow ? [
+                    'id' => $data->approvalFlow->id,
+                    'name' => $data->approvalFlow->name,
+                ] : null,
+
+                'requester' => $data->requester ? [
+                    'id' => $data->requester->id,
+                    'name' => encrypt_decrypt_db(
+                        'dec',
+                        $data->requester->name,
+                        $data->requester->id
+                    ),
+                ] : null,
+
+                'peserta' => $data->peserta->map(function ($p) {
+
+                    return [
+
+                        'id' => $p->id,
+                        'nama' => $p->nama,
+                        'nip' => $p->nip,
+                        'jabatan' => $p->jabatan,
+                        'kota_asal' => $p->kota_asal,
+                        'kota_tujuan' => $p->kota_tujuan,
+                        'dari_tanggal' => $p->dari_tanggal,
+                        'sampai_tanggal' => $p->sampai_tanggal,
+
+                        'transportasi' => $p->transportasi,
+                        'penginapan' => $p->penginapan,
+                    ];
+                }),
+            ]
         ]);
     }
 
@@ -333,6 +400,7 @@ class SppdController extends Controller
                     "jenisDokumen",
                     "costCenter",
                     "approvalFlowId",
+                    "departmentId",
                     "kegiatan",
                     "peserta"
                 ],
@@ -359,6 +427,12 @@ class SppdController extends Controller
 
                     new OA\Property(
                         property: "approvalFlowId",
+                        type: "bigint",
+                        example: "1"
+                    ),
+
+                    new OA\Property(
+                        property: "departmentId",
                         type: "bigint",
                         example: "1"
                     ),
@@ -626,13 +700,16 @@ class SppdController extends Controller
                 'sppd_number' => $sppdNumber,
                 'jenis_dokumen' => $request->jenisDokumen,
                 'cost_center' => $request->costCenter,
-                'approval_flow_id' => $request->jenisPerjalanan,
+                'approval_flow_id' => $request->approvalFlowId,
                 'kegiatan' => $request->kegiatan,
                 'ringkasan_agenda' => $request->ringkasanAgenda,
                 'requester_id' => auth()->id(),
+                'requester_department_id' => auth()->user()->department_id,
+                'requester_jabatan_id' => auth()->user()->jabatan_id,
+                'department_id' => $request->departmentId ?? auth()->user()->department_id,
                 'approval_status' => 'draft'
             ]);
-
+    
             $totalGrand = 0;
 
             foreach ($request->peserta as $p) {
@@ -1062,7 +1139,7 @@ class SppdController extends Controller
             $sppd->update([
                 'jenis_dokumen' => $request->jenisDokumen,
                 'cost_center' => $request->costCenter,
-                'approval_flow_id' => $request->jenisPerjalanan,
+                'approval_flow_id' => $request->approvalFlowId,
                 'kegiatan' => $request->kegiatan,
                 'ringkasan_agenda' => $request->ringkasanAgenda,
             ]);
