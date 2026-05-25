@@ -12,6 +12,7 @@ use App\Http\Controllers\JabatanApprovalController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SppdController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\SppdApprovalController;
 
 // ============================
 //  Auth Routes (tanpa token)
@@ -248,8 +249,20 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/sppd/{id}',[SppdController::class, 'update']
     )->middleware('permission:sppd.update');
 
-    Route::delete('/sppd/{id}',
-        [SppdController::class, 'destroy']
+    Route::delete('/sppd/{id}',[SppdController::class, 'destroy']
     )->middleware('permission:sppd.delete');
 
+    Route::patch('/sppd/{id}/submit',[SppdController::class, 'submit']
+    )->middleware('permission:sppd.submit');
+
+});
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::post('/sppd/{id}/approval', [SppdApprovalController::class, 'action'])
+        ->middleware('permission:sppd.approval');
+
+    Route::get('/sppd/{id}/approval-history', [SppdApprovalController::class, 'history'])
+        ->middleware('permission:sppd.view');
+    
 });
