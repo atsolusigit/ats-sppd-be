@@ -24,6 +24,8 @@ class TrSppd extends Model
         'approval_status',
         'approval_flow_id',
 
+        'current_approval_level',
+
         'requester_department_id',
         'requester_jabatan_id',
         'department_id',

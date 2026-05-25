@@ -135,6 +135,7 @@ class SppdController extends Controller
             'requester',
             'peserta',
             'approval_flow',
+            'approvals',
             'peserta.transportasi',
             'peserta.penginapan'
         ]);
@@ -217,6 +218,7 @@ class SppdController extends Controller
                 'kegiatan' => $item->kegiatan,
                 'ringkasan_agenda' => $item->ringkasan_agenda,
                 'approval_status' => $item->approval_status,
+                'current_approval_level' => $item->current_approval_level,
                 'grand_total' => $item->grand_total,
                 'created_at' => $item->created_at,
                 'updated_at' => $item->updated_at,
@@ -230,6 +232,20 @@ class SppdController extends Controller
                     'id' => $item->department->id,
                     'name' => $item->department->name,
                 ] : null,
+
+                'approvals' => $item->approvals->map(function ($a) {
+                    return [
+                        'id' => $a->id,
+                        'approval_level' => $a->approval_level,
+                        'approver_id' => $a->approver_id,
+                        'approver_name' => $a->approver ? encrypt_decrypt_db('dec', $a->approver->name, $a->approver->id) : null,
+                        'approver_jabatan_id' => $a->approver_jabatan_id,
+                        'approver_jabatan_name' => $a->approverJabatan ? $a->approverJabatan->name : null,
+                        'status' => $a->status,
+                        'notes' => $a->notes,
+                        'approved_at' => $a->approved_at,
+                    ];
+                }),
 
                 'peserta' => $item->peserta->map(function ($p) {
 
@@ -345,7 +361,8 @@ class SppdController extends Controller
                 'grand_total' => $data->grand_total,
                 'submitted_at' => $data->submitted_at,
                 'created_at' => $data->created_at,
-
+                'updated_at' => $data->updated_at,
+                'current_approval_level' => $data->current_approval_level,
                 'approval_flow' => $data->approvalFlow ? [
                     'id' => $data->approvalFlow->id,
                     'name' => $data->approvalFlow->name,
@@ -1360,7 +1377,7 @@ class SppdController extends Controller
      * SUBMIT SPPD
      */
 
-    #[OA\Post(
+    #[OA\Patch(
         path: "/api/sppd/{id}/submit",
         tags: ["SPPD"],
         summary: "Submit SPPD",
@@ -1475,7 +1492,7 @@ class SppdController extends Controller
             $sppd->update([
                 'approval_status' => 'submitted',
                 'submitted_at' => now(),
-                'current_approval_level' => 1,
+                'current_approval_level' => 0,
             ]);
 
             /*
@@ -1484,10 +1501,9 @@ class SppdController extends Controller
             |----------------------------------------
             */
 
-            $created = $this->createApprovalStep(
+            $created = ApprovalHelper::createApprovalSteps(
                 sppdId: $sppd->id,
-                flowId: $sppd->approval_flow_id,
-                level: 1
+                flowId: $sppd->approval_flow_id
             );
 
             if (!$created) {
@@ -1496,7 +1512,7 @@ class SppdController extends Controller
 
                 return response()->json([
                     'status' => false,
-                    'message' => 'Approval flow level 1 tidak ditemukan'
+                    'message' => 'Approval flow tidak ditemukan'
                 ], 400);
             }
 
