@@ -2,30 +2,40 @@
 
 namespace App\Helpers;
 
+use App\Models\MstJabatanApproval;
 use Illuminate\Support\Facades\DB;
 
 class ApprovalHelper
 {
-    public static function createApprovalStep($sppdId, $flowId, $level)
+    public static function createApprovalSteps($sppdId, $flowId)
     {
-        $flow = DB::table('mst_approval_flow_details')
+        $flows = MstJabatanApproval::query()
             ->where('approval_flow_id', $flowId)
-            ->where('level', $level)
-            ->first();
+            ->ordered()
+            ->get();
 
-        if (!$flow) {
+        if ($flows->isEmpty()) {
             return false;
         }
 
-        DB::table('tr_sppd_approvals')->insert([
-            'sppd_id' => $sppdId,
-            'approval_level' => $level,
-            'approver_id' => $flow->approver_id ?? null,
-            'approver_jabatan_id' => $flow->approver_jabatan_id ?? null,
-            'status' => 'waiting',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        foreach ($flows as $flow) {
+
+            DB::table('tr_sppd_approvals')->insert([
+
+                'sppd_id' => $sppdId,
+
+                'approval_level' => $flow->approval_order,
+
+                'approver_id' => $flow->target_user_id,
+
+                'approver_jabatan_id' => $flow->target_jabatan_id,
+
+                'status' => 'waiting',
+
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         return true;
     }

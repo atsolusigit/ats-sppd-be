@@ -2934,13 +2934,13 @@
             }
         },
         "/api/sppd/{id}/submit": {
-            "post": {
+            "patch": {
                 "tags": [
                     "SPPD"
                 ],
                 "summary": "Submit SPPD",
                 "description": "SUBMIT SPPD",
-                "operationId": "db346a967311109b81a429a25d0019a7",
+                "operationId": "1bea15877d9763ec027cb9d47e837132",
                 "parameters": [
                     {
                         "name": "id",
