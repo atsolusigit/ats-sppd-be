@@ -191,7 +191,7 @@ class SppdApprovalController extends Controller
         try {
 
             $sppd = TrSppd::with([
-                'approvalFlow'
+                'approval_flow'
             ])->findOrFail($sppdId);
 
             /*

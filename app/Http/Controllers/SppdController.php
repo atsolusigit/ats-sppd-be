@@ -431,25 +431,25 @@ class SppdController extends Controller
                     */
 
                     new OA\Property(
-                        property: "jenisDokumen",
+                        property: "jenis_dokumen",
                         type: "bigint",
                         example: "1"
                     ),
 
                     new OA\Property(
-                        property: "costCenter",
+                        property: "cost_center",
                         type: "string",
                         example: "CC001"
                     ),
 
                     new OA\Property(
-                        property: "approvalFlowId",
+                        property: "approval_flow_id",
                         type: "bigint",
                         example: "1"
                     ),
 
                     new OA\Property(
-                        property: "departmentId",
+                        property: "department_id",
                         type: "bigint",
                         example: "1"
                     ),
@@ -461,7 +461,7 @@ class SppdController extends Controller
                     ),
 
                     new OA\Property(
-                        property: "ringkasanAgenda",
+                        property: "ringkasan_agenda",
                         type: "string",
                         example: "Pembahasan kerjasama project"
                     ),
@@ -499,25 +499,25 @@ class SppdController extends Controller
                                 ),
 
                                 new OA\Property(
-                                    property: "kotaAsal",
+                                    property: "kota_asal",
                                     type: "string",
                                     example: "Jakarta"
                                 ),
 
                                 new OA\Property(
-                                    property: "kotaTujuan",
+                                    property: "kota_tujuan",
                                     type: "string",
                                     example: "Bandung"
                                 ),
 
                                 new OA\Property(
-                                    property: "dariTanggal",
+                                    property: "dari_tanggal",
                                     type: "string",
                                     format: "date"
                                 ),
 
                                 new OA\Property(
-                                    property: "sampaiTanggal",
+                                    property: "sampai_tanggal",
                                     type: "string",
                                     format: "date"
                                 ),
@@ -537,25 +537,25 @@ class SppdController extends Controller
                                         properties: [
 
                                             new OA\Property(
-                                                property: "jenisTransportasi",
+                                                property: "jenis_transportasi",
                                                 type: "string",
                                                 example: "Pesawat"
                                             ),
 
                                             new OA\Property(
-                                                property: "namaTravel",
+                                                property: "nama_travel",
                                                 type: "string",
                                                 example: "Garuda Indonesia"
                                             ),
 
                                             new OA\Property(
-                                                property: "asalKeberangkatan",
+                                                property: "asal_keberangkatan",
                                                 type: "string",
                                                 example: "Jakarta"
                                             ),
 
                                             new OA\Property(
-                                                property: "tujuanKeberangakatan",
+                                                property: "tujuan_keberangkatan",
                                                 type: "string",
                                                 example: "Bandung"
                                             ),
@@ -567,7 +567,7 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "estimasiBiaya",
+                                                property: "estimasi_biaya",
                                                 type: "number",
                                                 example: 1500000
                                             ),
@@ -579,13 +579,13 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "namaLengkap",
+                                                property: "nama_lengkap",
                                                 type: "string",
                                                 example: "Bangkit"
                                             ),
 
                                             new OA\Property(
-                                                property: "noHp",
+                                                property: "no_hp",
                                                 type: "string",
                                                 example: "08123456789"
                                             ),
@@ -608,13 +608,13 @@ class SppdController extends Controller
                                         properties: [
 
                                             new OA\Property(
-                                                property: "jenisPenginapan",
+                                                property: "jenis_penginapan",
                                                 type: "string",
                                                 example: "Hotel"
                                             ),
 
                                             new OA\Property(
-                                                property: "namaTempat",
+                                                property: "nama_tempat",
                                                 type: "string",
                                                 example: "Hotel Santika"
                                             ),
@@ -626,19 +626,19 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "checkIn",
+                                                property: "check_in",
                                                 type: "string",
                                                 format: "date"
                                             ),
 
                                             new OA\Property(
-                                                property: "checkOut",
+                                                property: "check_out",
                                                 type: "string",
                                                 format: "date"
                                             ),
 
                                             new OA\Property(
-                                                property: "estimasiBiaya",
+                                                property: "estimasi_biaya",
                                                 type: "number",
                                                 example: 2500000
                                             ),
@@ -650,13 +650,13 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "namaLengkap",
+                                                property: "nama_lengkap",
                                                 type: "string",
                                                 example: "Bangkit"
                                             ),
 
                                             new OA\Property(
-                                                property: "noHp",
+                                                property: "no_hp",
                                                 type: "string",
                                                 example: "08123456789"
                                             ),
@@ -715,15 +715,15 @@ class SppdController extends Controller
         $sppdNumber = 'SPPD-' . date('YmdHis');
             $sppd = TrSppd::create([
                 'sppd_number' => $sppdNumber,
-                'jenis_dokumen' => $request->jenisDokumen,
-                'cost_center' => $request->costCenter,
-                'approval_flow_id' => $request->approvalFlowId,
+                'jenis_dokumen' => $request->jenis_dokumen,
+                'cost_center' => $request->cost_center,
+                'approval_flow_id' => $request->approval_flow_id,
                 'kegiatan' => $request->kegiatan,
-                'ringkasan_agenda' => $request->ringkasanAgenda,
+                'ringkasan_agenda' => $request->ringkasan_agenda,
                 'requester_id' => auth()->id(),
                 'requester_department_id' => auth()->user()->department_id,
                 'requester_jabatan_id' => auth()->user()->jabatan_id,
-                'department_id' => $request->departmentId ?? auth()->user()->department_id,
+                'department_id' => $request->department_id ?? auth()->user()->department_id,
                 'approval_status' => 'draft'
             ]);
     
@@ -735,10 +735,10 @@ class SppdController extends Controller
                     'nama' => $p['nama'],
                     'nip' => $p['nip'],
                     'jabatan' => $p['jabatan'],
-                    'kota_asal' => $p['kotaAsal'],
-                    'kota_tujuan' => $p['kotaTujuan'],
-                    'dari_tanggal' => $p['dariTanggal'],
-                    'sampai_tanggal' => $p['sampaiTanggal'],
+                    'kota_asal' => $p['kota_asal'],
+                    'kota_tujuan' => $p['kota_tujuan'],
+                    'dari_tanggal' => $p['dari_tanggal'],
+                    'sampai_tanggal' => $p['sampai_tanggal'],
                 ]);
 
                 $totalTransport = 0;
@@ -753,18 +753,18 @@ class SppdController extends Controller
                 foreach ($p['transportasi'] ?? [] as $t) {
 
                     $peserta->transportasi()->create([
-                        'jenis_transportasi' => $t['jenisTransportasi'] ?? null,
-                        'nama_travel' => $t['namaTravel'] ?? null,
-                        'asal_keberangkatan' => $t['asalKeberangkatan'] ?? null,
-                        'tujuan_keberangkatan' => $t['tujuanKeberangakatan'] ?? null,
+                        'jenis_transportasi' => $t['jenis_transportasi'] ?? null,
+                        'nama_travel' => $t['nama_travel'] ?? null,
+                        'asal_keberangkatan' => $t['asal_keberangkatan'] ?? null,
+                        'tujuan_keberangkatan' => $t['tujuan_keberangkatan'] ?? null,
                         'waktu' => $t['waktu'] ?? null,
-                        'estimasi_biaya' => $t['estimasiBiaya'] ?? 0,
+                        'estimasi_biaya' => $t['estimasi_biaya'] ?? 0,
                         'keterangan' => $t['keterangan'] ?? null,
-                        'nama_lengkap' => $t['namaLengkap'] ?? null,
-                        'no_hp' => $t['noHp'] ?? null,
+                        'nama_lengkap' => $t['nama_lengkap'] ?? null,
+                        'no_hp' => $t['no_hp'] ?? null,
                     ]);
 
-                    $totalTransport += $t['estimasiBiaya'] ?? 0;
+                    $totalTransport += $t['estimasi_biaya'] ?? 0;
                 }
 
                 /*
@@ -776,18 +776,18 @@ class SppdController extends Controller
                 foreach ($p['penginapan'] ?? [] as $h) {
 
                     $peserta->penginapan()->create([
-                        'jenis_penginapan' => $h['jenisPenginapan'] ?? null,
-                        'nama_tempat' => $h['namaTempat'] ?? null,
+                        'jenis_penginapan' => $h['jenis_penginapan'] ?? null,
+                        'nama_tempat' => $h['nama_tempat'] ?? null,
                         'lokasi' => $h['lokasi'] ?? null,
-                        'check_in' => $h['checkIn'] ?? null,
-                        'check_out' => $h['checkOut'] ?? null,
-                        'estimasi_biaya' => $h['estimasiBiaya'] ?? 0,
+                        'check_in' => $h['check_in'] ?? null,
+                        'check_out' => $h['check_out'] ?? null,
+                        'estimasi_biaya' => $h['estimasi_biaya'] ?? 0,
                         'keterangan' => $h['keterangan'] ?? null,
-                        'nama_lengkap' => $h['namaLengkap'] ?? null,
-                        'no_hp' => $h['noHp'] ?? null,
+                        'nama_lengkap' => $h['nama_lengkap'] ?? null,
+                        'no_hp' => $h['no_hp'] ?? null,
                     ]);
 
-                    $totalPenginapan += $h['estimasiBiaya'] ?? 0;
+                    $totalPenginapan += $h['estimasi_biaya'] ?? 0;
                 }
 
                 $totalPeserta = $totalTransport + $totalPenginapan;
@@ -845,24 +845,24 @@ class SppdController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ["jenisDokumen", "jenisPerjalanan", "peserta"],
+                required: ["jenis_dokumen", "jenis_perjalanan", "peserta"],
                 properties: [
 
                     // HEADER
                     new OA\Property(
-                        property: "jenisDokumen",
+                        property: "jenis_dokumen",
                         type: "string",
                         example: "SPPD Direksi"
                     ),
 
                     new OA\Property(
-                        property: "costCenter",
+                        property: "cost_center",
                         type: "string",
                         example: "CC001"
                     ),
 
                     new OA\Property(
-                        property: "approvalFlowId",
+                        property: "approval_flow_id",
                         type: "bigint",
                         example: "1"
                     ),
@@ -874,7 +874,7 @@ class SppdController extends Controller
                     ),
 
                     new OA\Property(
-                        property: "ringkasanAgenda",
+                        property: "ringkasan_agenda",
                         type: "string",
                         example: "Meeting kerja sama"
                     ),
@@ -905,25 +905,25 @@ class SppdController extends Controller
                                 ),
 
                                 new OA\Property(
-                                    property: "kotaAsal",
+                                    property: "kota_asal",
                                     type: "string",
                                     example: "Jakarta"
                                 ),
 
                                 new OA\Property(
-                                    property: "kotaTujuan",
+                                    property: "kota_tujuan",
                                     type: "string",
                                     example: "Bandung"
                                 ),
 
                                 new OA\Property(
-                                    property: "dariTanggal",
+                                    property: "dari_tanggal",
                                     type: "string",
                                     format: "date"
                                 ),
 
                                 new OA\Property(
-                                    property: "sampaiTanggal",
+                                    property: "sampai_tanggal",
                                     type: "string",
                                     format: "date"
                                 ),
@@ -936,25 +936,25 @@ class SppdController extends Controller
                                         properties: [
 
                                             new OA\Property(
-                                                property: "jenisTransportasi",
+                                                property: "jenis_transportasi",
                                                 type: "string",
                                                 example: "Pesawat"
                                             ),
 
                                             new OA\Property(
-                                                property: "namaTravel",
+                                                property: "nama_travel",
                                                 type: "string",
                                                 example: "Garuda"
                                             ),
 
                                             new OA\Property(
-                                                property: "asalKeberangkatan",
+                                                property: "asal_keberangkatan",
                                                 type: "string",
                                                 example: "Jakarta"
                                             ),
 
                                             new OA\Property(
-                                                property: "tujuanKeberangakatan",
+                                                property: "tujuan_keberangkatan",
                                                 type: "string",
                                                 example: "Bandung"
                                             ),
@@ -966,7 +966,7 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "estimasiBiaya",
+                                                property: "estimasi_biaya",
                                                 type: "number",
                                                 format: "float",
                                                 example: 1500000
@@ -979,13 +979,13 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "namaLengkap",
+                                                property: "nama_lengkap",
                                                 type: "string",
                                                 example: "Bangkit"
                                             ),
 
                                             new OA\Property(
-                                                property: "noHp",
+                                                property: "no_hp",
                                                 type: "string",
                                                 example: "08123456789"
                                             ),
@@ -1001,13 +1001,13 @@ class SppdController extends Controller
                                         properties: [
 
                                             new OA\Property(
-                                                property: "jenisPenginapan",
+                                                property: "jenis_penginapan",
                                                 type: "string",
                                                 example: "Hotel"
                                             ),
 
                                             new OA\Property(
-                                                property: "namaTempat",
+                                                property: "nama_tempat",
                                                 type: "string",
                                                 example: "Hilton"
                                             ),
@@ -1019,19 +1019,19 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "checkIn",
+                                                property: "check_in",
                                                 type: "string",
                                                 format: "date"
                                             ),
 
                                             new OA\Property(
-                                                property: "checkOut",
+                                                property: "check_out",
                                                 type: "string",
                                                 format: "date"
                                             ),
 
                                             new OA\Property(
-                                                property: "estimasiBiaya",
+                                                property: "estimasi_biaya",
                                                 type: "number",
                                                 format: "float",
                                                 example: 2500000
@@ -1044,13 +1044,13 @@ class SppdController extends Controller
                                             ),
 
                                             new OA\Property(
-                                                property: "namaLengkap",
+                                                property: "nama_lengkap",
                                                 type: "string",
                                                 example: "Bangkit"
                                             ),
 
                                             new OA\Property(
-                                                property: "noHp",
+                                                property: "no_hp",
                                                 type: "string",
                                                 example: "08123456789"
                                             ),
@@ -1154,11 +1154,11 @@ class SppdController extends Controller
             */
 
             $sppd->update([
-                'jenis_dokumen' => $request->jenisDokumen,
-                'cost_center' => $request->costCenter,
-                'approval_flow_id' => $request->approvalFlowId,
+                'jenis_dokumen' => $request->jenis_dokumen,
+                'cost_center' => $request->cost_center,
+                'approval_flow_id' => $request->approval_flow_id,
                 'kegiatan' => $request->kegiatan,
-                'ringkasan_agenda' => $request->ringkasanAgenda,
+                'ringkasan_agenda' => $request->ringkasan_agenda,
             ]);
 
             /*
@@ -1189,10 +1189,10 @@ class SppdController extends Controller
                     'nama' => $p['nama'],
                     'nip' => $p['nip'],
                     'jabatan' => $p['jabatan'],
-                    'kota_asal' => $p['kotaAsal'],
-                    'kota_tujuan' => $p['kotaTujuan'],
-                    'dari_tanggal' => $p['dariTanggal'],
-                    'sampai_tanggal' => $p['sampaiTanggal'],
+                    'kota_asal' => $p['kota_asal'],
+                    'kota_tujuan' => $p['kota_tujuan'],
+                    'dari_tanggal' => $p['dari_tanggal'],
+                    'sampai_tanggal' => $p['sampai_tanggal'],
                 ]);
 
                 $totalTransport = 0;
@@ -1201,35 +1201,35 @@ class SppdController extends Controller
                 foreach ($p['transportasi'] ?? [] as $t) {
 
                     $peserta->transportasi()->create([
-                        'jenis_transportasi' => $t['jenisTransportasi'] ?? null,
-                        'nama_travel' => $t['namaTravel'] ?? null,
-                        'asal_keberangkatan' => $t['asalKeberangkatan'] ?? null,
-                        'tujuan_keberangkatan' => $t['tujuanKeberangakatan'] ?? null,
+                        'jenis_transportasi' => $t['jenis_transportasi'] ?? null,
+                        'nama_travel' => $t['nama_travel'] ?? null,
+                        'asal_keberangkatan' => $t['asal_keberangkatan'] ?? null,
+                        'tujuan_keberangkatan' => $t['tujuan_keberangkatan'] ?? null,
                         'waktu' => $t['waktu'] ?? null,
-                        'estimasi_biaya' => $t['estimasiBiaya'] ?? 0,
+                        'estimasi_biaya' => $t['estimasi_biaya'] ?? 0,
                         'keterangan' => $t['keterangan'] ?? null,
-                        'nama_lengkap' => $t['namaLengkap'] ?? null,
-                        'no_hp' => $t['noHp'] ?? null,
+                        'nama_lengkap' => $t['nama_lengkap'] ?? null,
+                        'no_hp' => $t['no_hp'] ?? null,
                     ]);
 
-                    $totalTransport += $t['estimasiBiaya'] ?? 0;
+                    $totalTransport += $t['estimasi_biaya'] ?? 0;
                 }
 
                 foreach ($p['penginapan'] ?? [] as $h) {
 
                     $peserta->penginapan()->create([
-                        'jenis_penginapan' => $h['jenisPenginapan'] ?? null,
-                        'nama_tempat' => $h['namaTempat'] ?? null,
+                        'jenis_penginapan' => $h['jenis_penginapan'] ?? null,
+                        'nama_tempat' => $h['nama_tempat'] ?? null,
                         'lokasi' => $h['lokasi'] ?? null,
-                        'check_in' => $h['checkIn'] ?? null,
-                        'check_out' => $h['checkOut'] ?? null,
-                        'estimasi_biaya' => $h['estimasiBiaya'] ?? 0,
+                        'check_in' => $h['check_in'] ?? null,
+                        'check_out' => $h['check_out'] ?? null,
+                        'estimasi_biaya' => $h['estimasi_biaya'] ?? 0,
                         'keterangan' => $h['keterangan'] ?? null,
-                        'nama_lengkap' => $h['namaLengkap'] ?? null,
-                        'no_hp' => $h['noHp'] ?? null,
+                        'nama_lengkap' => $h['nama_lengkap'] ?? null,
+                        'no_hp' => $h['no_hp'] ?? null,
                     ]);
 
-                    $totalPenginapan += $h['estimasiBiaya'] ?? 0;
+                    $totalPenginapan += $h['estimasi_biaya'] ?? 0;
                 }
 
                 $totalPeserta = $totalTransport + $totalPenginapan;
