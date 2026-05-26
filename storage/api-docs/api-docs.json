@@ -2444,19 +2444,19 @@
                                     "peserta"
                                 ],
                                 "properties": {
-                                    "jenisDokumen": {
+                                    "jenis_dokumen": {
                                         "type": "bigint",
                                         "example": "1"
                                     },
-                                    "costCenter": {
+                                    "cost_center": {
                                         "type": "string",
                                         "example": "CC001"
                                     },
-                                    "approvalFlowId": {
+                                    "approval_flow_id": {
                                         "type": "bigint",
                                         "example": "1"
                                     },
-                                    "departmentId": {
+                                    "department_id": {
                                         "type": "bigint",
                                         "example": "1"
                                     },
@@ -2464,7 +2464,7 @@
                                         "type": "string",
                                         "example": "Meeting Client"
                                     },
-                                    "ringkasanAgenda": {
+                                    "ringkasan_agenda": {
                                         "type": "string",
                                         "example": "Pembahasan kerjasama project"
                                     },
@@ -2484,19 +2484,19 @@
                                                     "type": "string",
                                                     "example": "Backend Developer"
                                                 },
-                                                "kotaAsal": {
+                                                "kota_asal": {
                                                     "type": "string",
                                                     "example": "Jakarta"
                                                 },
-                                                "kotaTujuan": {
+                                                "kota_tujuan": {
                                                     "type": "string",
                                                     "example": "Bandung"
                                                 },
-                                                "dariTanggal": {
+                                                "dari_tanggal": {
                                                     "type": "string",
                                                     "format": "date"
                                                 },
-                                                "sampaiTanggal": {
+                                                "sampai_tanggal": {
                                                     "type": "string",
                                                     "format": "date"
                                                 },
@@ -2504,19 +2504,19 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "jenisTransportasi": {
+                                                            "jenis_transportasi": {
                                                                 "type": "string",
                                                                 "example": "Pesawat"
                                                             },
-                                                            "namaTravel": {
+                                                            "nama_travel": {
                                                                 "type": "string",
                                                                 "example": "Garuda Indonesia"
                                                             },
-                                                            "asalKeberangkatan": {
+                                                            "asal_keberangkatan": {
                                                                 "type": "string",
                                                                 "example": "Jakarta"
                                                             },
-                                                            "tujuanKeberangakatan": {
+                                                            "tujuan_keberangkatan": {
                                                                 "type": "string",
                                                                 "example": "Bandung"
                                                             },
@@ -2524,7 +2524,7 @@
                                                                 "type": "string",
                                                                 "format": "date-time"
                                                             },
-                                                            "estimasiBiaya": {
+                                                            "estimasi_biaya": {
                                                                 "type": "number",
                                                                 "example": 1500000
                                                             },
@@ -2532,11 +2532,11 @@
                                                                 "type": "string",
                                                                 "example": "PP"
                                                             },
-                                                            "namaLengkap": {
+                                                            "nama_lengkap": {
                                                                 "type": "string",
                                                                 "example": "Bangkit"
                                                             },
-                                                            "noHp": {
+                                                            "no_hp": {
                                                                 "type": "string",
                                                                 "example": "08123456789"
                                                             }
@@ -2548,11 +2548,11 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "jenisPenginapan": {
+                                                            "jenis_penginapan": {
                                                                 "type": "string",
                                                                 "example": "Hotel"
                                                             },
-                                                            "namaTempat": {
+                                                            "nama_tempat": {
                                                                 "type": "string",
                                                                 "example": "Hotel Santika"
                                                             },
@@ -2560,15 +2560,15 @@
                                                                 "type": "string",
                                                                 "example": "Bandung"
                                                             },
-                                                            "checkIn": {
+                                                            "check_in": {
                                                                 "type": "string",
                                                                 "format": "date"
                                                             },
-                                                            "checkOut": {
+                                                            "check_out": {
                                                                 "type": "string",
                                                                 "format": "date"
                                                             },
-                                                            "estimasiBiaya": {
+                                                            "estimasi_biaya": {
                                                                 "type": "number",
                                                                 "example": 2500000
                                                             },
@@ -2576,11 +2576,11 @@
                                                                 "type": "string",
                                                                 "example": "2 malam"
                                                             },
-                                                            "namaLengkap": {
+                                                            "nama_lengkap": {
                                                                 "type": "string",
                                                                 "example": "Bangkit"
                                                             },
-                                                            "noHp": {
+                                                            "no_hp": {
                                                                 "type": "string",
                                                                 "example": "08123456789"
                                                             }
@@ -2689,20 +2689,20 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "jenisDokumen",
-                                    "jenisPerjalanan",
+                                    "jenis_dokumen",
+                                    "jenis_perjalanan",
                                     "peserta"
                                 ],
                                 "properties": {
-                                    "jenisDokumen": {
+                                    "jenis_dokumen": {
                                         "type": "string",
                                         "example": "SPPD Direksi"
                                     },
-                                    "costCenter": {
+                                    "cost_center": {
                                         "type": "string",
                                         "example": "CC001"
                                     },
-                                    "approvalFlowId": {
+                                    "approval_flow_id": {
                                         "type": "bigint",
                                         "example": "1"
                                     },
@@ -2710,7 +2710,7 @@
                                         "type": "string",
                                         "example": "Meeting Client"
                                     },
-                                    "ringkasanAgenda": {
+                                    "ringkasan_agenda": {
                                         "type": "string",
                                         "example": "Meeting kerja sama"
                                     },
@@ -2730,19 +2730,19 @@
                                                     "type": "string",
                                                     "example": "Backend Developer"
                                                 },
-                                                "kotaAsal": {
+                                                "kota_asal": {
                                                     "type": "string",
                                                     "example": "Jakarta"
                                                 },
-                                                "kotaTujuan": {
+                                                "kota_tujuan": {
                                                     "type": "string",
                                                     "example": "Bandung"
                                                 },
-                                                "dariTanggal": {
+                                                "dari_tanggal": {
                                                     "type": "string",
                                                     "format": "date"
                                                 },
-                                                "sampaiTanggal": {
+                                                "sampai_tanggal": {
                                                     "type": "string",
                                                     "format": "date"
                                                 },
@@ -2750,19 +2750,19 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "jenisTransportasi": {
+                                                            "jenis_transportasi": {
                                                                 "type": "string",
                                                                 "example": "Pesawat"
                                                             },
-                                                            "namaTravel": {
+                                                            "nama_travel": {
                                                                 "type": "string",
                                                                 "example": "Garuda"
                                                             },
-                                                            "asalKeberangkatan": {
+                                                            "asal_keberangkatan": {
                                                                 "type": "string",
                                                                 "example": "Jakarta"
                                                             },
-                                                            "tujuanKeberangakatan": {
+                                                            "tujuan_keberangkatan": {
                                                                 "type": "string",
                                                                 "example": "Bandung"
                                                             },
@@ -2770,7 +2770,7 @@
                                                                 "type": "string",
                                                                 "example": "2026-05-21 08:00:00"
                                                             },
-                                                            "estimasiBiaya": {
+                                                            "estimasi_biaya": {
                                                                 "type": "number",
                                                                 "format": "float",
                                                                 "example": 1500000
@@ -2779,11 +2779,11 @@
                                                                 "type": "string",
                                                                 "example": "PP"
                                                             },
-                                                            "namaLengkap": {
+                                                            "nama_lengkap": {
                                                                 "type": "string",
                                                                 "example": "Bangkit"
                                                             },
-                                                            "noHp": {
+                                                            "no_hp": {
                                                                 "type": "string",
                                                                 "example": "08123456789"
                                                             }
@@ -2795,11 +2795,11 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "jenisPenginapan": {
+                                                            "jenis_penginapan": {
                                                                 "type": "string",
                                                                 "example": "Hotel"
                                                             },
-                                                            "namaTempat": {
+                                                            "nama_tempat": {
                                                                 "type": "string",
                                                                 "example": "Hilton"
                                                             },
@@ -2807,15 +2807,15 @@
                                                                 "type": "string",
                                                                 "example": "Bandung"
                                                             },
-                                                            "checkIn": {
+                                                            "check_in": {
                                                                 "type": "string",
                                                                 "format": "date"
                                                             },
-                                                            "checkOut": {
+                                                            "check_out": {
                                                                 "type": "string",
                                                                 "format": "date"
                                                             },
-                                                            "estimasiBiaya": {
+                                                            "estimasi_biaya": {
                                                                 "type": "number",
                                                                 "format": "float",
                                                                 "example": 2500000
@@ -2824,11 +2824,11 @@
                                                                 "type": "string",
                                                                 "example": "2 malam"
                                                             },
-                                                            "namaLengkap": {
+                                                            "nama_lengkap": {
                                                                 "type": "string",
                                                                 "example": "Bangkit"
                                                             },
-                                                            "noHp": {
+                                                            "no_hp": {
                                                                 "type": "string",
                                                                 "example": "08123456789"
                                                             }
