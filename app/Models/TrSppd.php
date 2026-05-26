@@ -33,6 +33,13 @@ class TrSppd extends Model
         'total_transport',
         'total_accommodation',
         'grand_total',
+
+        'created_by',
+        'updated_by',
+        
+        'submitted_at',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
