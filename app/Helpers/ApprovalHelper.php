@@ -11,6 +11,10 @@ class ApprovalHelper
 {
     public static function createApprovalSteps($sppdId, $flowId)
     {
+
+        DB::table('tr_sppd_approvals')
+            ->where('sppd_id', $sppdId)
+            ->delete();
         /*
         |--------------------------------------------------------------------------
         | GET FLOW STEPS
