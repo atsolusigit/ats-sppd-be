@@ -150,6 +150,7 @@ class SppdController extends Controller
 
             $query->whereHas('requester', function ($q) use ($user) {
                 $q->where('division_id', $user->division_id);
+                
             });
         }
 
@@ -250,14 +251,15 @@ class SppdController extends Controller
                 'peserta' => $item->peserta->map(function ($p) {
 
                     return [
-                        'id' => $p->id,
-                        'nama' => $p->nama,
-                        'nip' => $p->nip,
-                        'jabatan' => $p->jabatan,
-                        'kota_asal' => $p->kota_asal,
-                        'kota_tujuan' => $p->kota_tujuan,
-                        'dari_tanggal' => $p->dari_tanggal,
-                        'sampai_tanggal' => $p->sampai_tanggal,
+                        'id' => $p->id ?? null,
+                        'nama' => $p->nama ?? null,
+                        'nip' => $p->nip ?? null,
+                        'jabatan' => $p->jabatan ?? null,
+                        'kota_asal' => $p->kota_asal ?? null,
+                        'kota_tujuan' => $p->kota_tujuan ?? null,
+                        'tempat_sppd' => $p->tempat_sppd ?? null,
+                        'dari_tanggal' => $p->dari_tanggal ?? null,
+                        'sampai_tanggal' => $p->sampai_tanggal ?? null,
 
                         'transportasi' => $p->transportasi ?? null,
                         'penginapan' => $p->penginapan ?? null,
@@ -363,9 +365,9 @@ class SppdController extends Controller
                 'created_at' => $data->created_at,
                 'updated_at' => $data->updated_at,
                 'current_approval_level' => $data->current_approval_level,
-                'approval_flow' => $data->approvalFlow ? [
-                    'id' => $data->approvalFlow->id,
-                    'name' => $data->approvalFlow->name,
+                'approval_flow' => $data->approval_flow ? [
+                    'id' => $data->approval_flow->id,
+                    'name' => $data->approval_flow->name,
                 ] : null,
 
                 'requester' => $data->requester ? [
@@ -508,6 +510,12 @@ class SppdController extends Controller
                                     property: "kota_tujuan",
                                     type: "string",
                                     example: "Bandung"
+                                ),
+
+                                new OA\Property(
+                                    property: "tempat_sppd",
+                                    type: "string",
+                                    example: "Gedung Balai Sidang Jakarta Convention Center"
                                 ),
 
                                 new OA\Property(
@@ -732,13 +740,14 @@ class SppdController extends Controller
             foreach ($request->peserta as $p) {
 
                 $peserta = $sppd->peserta()->create([
-                    'nama' => $p['nama'],
-                    'nip' => $p['nip'],
-                    'jabatan' => $p['jabatan'],
-                    'kota_asal' => $p['kota_asal'],
-                    'kota_tujuan' => $p['kota_tujuan'],
-                    'dari_tanggal' => $p['dari_tanggal'],
-                    'sampai_tanggal' => $p['sampai_tanggal'],
+                    'nama' => $p['nama'] ?? null,
+                    'nip' => $p['nip']?? null,
+                    'jabatan' => $p['jabatan'] ?? null,
+                    'kota_asal' => $p['kota_asal'] ?? null,
+                    'kota_tujuan' => $p['kota_tujuan']?? null,
+                    'tempat_sppd' => $p['tempat_sppd'] ?? null,
+                    'dari_tanggal' => $p['dari_tanggal'] ?? null,
+                    'sampai_tanggal' => $p['sampai_tanggal'] ?? null,
                 ]);
 
                 $totalTransport = 0;

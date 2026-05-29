@@ -63,7 +63,7 @@ class ApprovalFlowController extends Controller
     {
         $flow = MstApprovalFlow::with([
             'department',
-            'jabatanApprovals.jabatan'
+            'jabatanApprovals.targetJabatan',
         ])->find($id);
 
         if (!$flow) {
