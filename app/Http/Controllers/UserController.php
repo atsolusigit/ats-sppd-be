@@ -10,6 +10,7 @@ use OpenApi\Attributes as OA;
 class UserController extends Controller
 {
     use HasDynamicFilter;
+
     #[OA\Get(
         path: "/api/users",
         tags: ["Users"],
@@ -40,14 +41,6 @@ class UserController extends Controller
                 required: false,
                 description: "Filter by role id",
                 schema: new OA\Schema(type: "integer", example: 5)
-            ),
-
-            new OA\Parameter(
-                name: "search",
-                in: "query",
-                required: false,
-                description: "Search by decrypted name/email",
-                schema: new OA\Schema(type: "string", example: "john")
             ),
 
             new OA\Parameter(
@@ -83,6 +76,7 @@ class UserController extends Controller
 
                         new OA\Property(
                             property: "pagination",
+                            type: "object",
                             properties: [
 
                                 new OA\Property(
@@ -108,8 +102,7 @@ class UserController extends Controller
                                     type: "integer",
                                     example: 3
                                 ),
-                            ],
-                            type: "object"
+                            ]
                         ),
 
                         new OA\Property(
@@ -128,13 +121,19 @@ class UserController extends Controller
                                     new OA\Property(
                                         property: "name",
                                         type: "string",
-                                        example: "john_doe"
+                                        example: "John Doe"
                                     ),
 
                                     new OA\Property(
                                         property: "email",
                                         type: "string",
                                         example: "john@gmail.com"
+                                    ),
+
+                                    new OA\Property(
+                                        property: "username",
+                                        type: "string",
+                                        example: "john_doe"
                                     ),
 
                                     new OA\Property(
@@ -155,7 +154,6 @@ class UserController extends Controller
                                         format: "date-time",
                                         example: "2026-05-19T02:24:41.000000Z"
                                     ),
-
                                 ]
                             )
                         )
@@ -172,14 +170,21 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $query = User::select([
+        $query = User::query()->select([
             'id',
             'name',
             'email',
+            'username',
             'status',
             'role_id',
             'created_at'
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTERS
+        |--------------------------------------------------------------------------
+        */
 
         $query = $this->applyFilters(
             $query,
@@ -189,52 +194,68 @@ class UserController extends Controller
                 'status',
                 'role_id'
             ],
-            [] // search dimatikan karena encrypted
+            []
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAGINATION
+        |--------------------------------------------------------------------------
+        */
 
         $data = $query->paginate(
             $request->get('per_page', 10)
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT RESPONSE
+        |--------------------------------------------------------------------------
+        */
 
-        $collection = $data->getCollection()->transform(function ($item) {
+        $collection = $data->getCollection()->map(function ($item) {
 
-            try {
-                $item->name = $item->name
-                    ? encrypt_decrypt_db(
-                        'dec',
-                        $item->name,
-                        $item->id
-                    )
-                    : null;
-            } catch (\Throwable $e) {
-                $item->name = null;
-            }
+            return [
 
-            try {
-                $item->email = $item->email
-                    ? encrypt_decrypt_db(
-                        'dec',
-                        $item->email,
-                        $item->id
-                    )
-                    : null;
-            } catch (\Throwable $e) {
-                $item->email = null;
-            }
+                'id' => $item->id,
 
-            return $item;
+                // gunakan accessor model
+                'name' => $item->name_decrypted,
+
+                'email' => $item->email_decrypted,
+
+                'username' => $item->username_decrypted,
+
+                'status' => $item->status,
+
+                'role_id' => $item->role_id,
+
+                'created_at' => $item->created_at,
+            ];
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSE
+        |--------------------------------------------------------------------------
+        */
+
         return response()->json([
+
             'status' => true,
+
             'pagination' => [
+
                 'current_page' => $data->currentPage(),
+
                 'last_page' => $data->lastPage(),
+
                 'per_page' => $data->perPage(),
+
                 'total' => $data->total(),
             ],
-            'data' => $collection     
+
+            'data' => $collection
         ]);
     }
 }

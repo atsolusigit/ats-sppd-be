@@ -2492,6 +2492,10 @@
                                                     "type": "string",
                                                     "example": "Bandung"
                                                 },
+                                                "tempat_sppd": {
+                                                    "type": "string",
+                                                    "example": "Gedung Balai Sidang Jakarta Convention Center"
+                                                },
                                                 "dari_tanggal": {
                                                     "type": "string",
                                                     "format": "date"

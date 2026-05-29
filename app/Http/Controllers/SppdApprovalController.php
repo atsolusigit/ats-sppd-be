@@ -264,7 +264,7 @@ class SppdApprovalController extends Controller
             if ($approval->status !== 'waiting') {
 
                 return response()->json([
-                    'status' => false,
+                    'status' => false,  
                     'message' => 'Approval sudah diproses sebelumnya'
                 ], 400);
             }
