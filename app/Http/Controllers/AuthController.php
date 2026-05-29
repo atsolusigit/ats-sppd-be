@@ -136,7 +136,8 @@ class AuthController extends Controller
                     'required',
                     'string',
                     'confirmed',
-                    Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(),
+                    // Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(),
+                    Password::min(8)->mixedCase()->letters()->numbers()->symbols(),
                 ],
             ];
 

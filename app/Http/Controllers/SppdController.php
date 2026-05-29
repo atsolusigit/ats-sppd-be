@@ -1147,7 +1147,7 @@ class SppdController extends Controller
             if (
                 !$user->hasPermission('sppd.update.all')
                 &&
-                $sppd->status !== 'draft'
+                $sppd->status !== 'draft' || $sppd->status === 'rejected'
             ) {
 
                 return response()->json([
