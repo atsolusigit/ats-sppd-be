@@ -19,6 +19,8 @@ class TrSppd extends Model
         'kegiatan',
         'ringkasan_agenda',
 
+        'lampiran',
+
         'requester_id',
 
         'approval_status',

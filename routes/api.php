@@ -231,6 +231,15 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])
         ->middleware('permission:user.view');
+
+    Route::get('/users/{id}', [UserController::class, 'show'])
+        ->middleware('permission:user.view');
+
+    Route::put('/users/{id}', [UserController::class, 'update'])
+        ->middleware('permission:user.update');
+
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])
+        ->middleware('permission:user.delete');
 });
 
 
@@ -264,5 +273,24 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/sppd/{id}/approval-history', [SppdApprovalController::class, 'history'])
         ->middleware('permission:sppd.view');
-    
+
+    Route::get('/approval-list',[SppdApprovalController::class, 'list']
+    )->middleware('permission:sppd.approval.list');
+   
+});
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::post('/reports', [ReportController::class, 'store'])
+        ->middleware('permission:report.create');
+
+    Route::get('/reports/{id}', [ReportController::class, 'show'])
+        ->middleware('permission:report.view');
+
+    Route::get('/reports', [ReportController::class, 'index'])
+        ->middleware('permission:report.view');
+        
+    Route::delete('/reports/{id}', [ReportController::class, 'destroy'])
+        ->middleware('permission:report.delete');
+
 });
