@@ -273,7 +273,14 @@ class AuthController extends Controller
                 return json(200, 'false', 'Login Gagal', 'Username/email tidak ditemukan.', []);
             }
 
-            $user = User::find($user->id); // Ambil model aslinya agar bisa pakai relasi dll
+            // $user = User::find($user->id); // Ambil model aslinya agar bisa pakai relasi dll
+             // ambil model
+            $user = User::with([
+                    'role.permissions',
+                    'department',
+                    'jabatan'
+                ])
+                ->find($user->id);
 
             // Status user
             if ($user->status == 0) {
@@ -301,7 +308,7 @@ class AuthController extends Controller
             $decryptedNip = $user->nip ? encrypt_decrypt_db('dec', $user->nip, $user->id) : null;
             $decryptedPhone = $user->phone_number ? encrypt_decrypt_db('dec', $user->phone_number, $user->id) : null;
 
-            $user->load('role');
+            $permissions = $user->role?->permissions?->pluck('slug');
 
             return json(200, 'true', 'Login Berhasil', 'Selamat datang!', [
                 'user' => [
@@ -317,6 +324,7 @@ class AuthController extends Controller
                     // 'jtkn' => $user->jtkn,
                     // 'fbtk' => $user->fbtk,
                     'role_id' => $user->role_id,
+                    'jabatan_id' => $user->jabatan_id,   
                     'created_at' => $user->created_at,
                     'updated_at' => $user->updated_at,
                     'nip' => $decryptedNip,
@@ -332,6 +340,7 @@ class AuthController extends Controller
                         'created_at' => $user->role->created_at,
                         'updated_at' => $user->role->updated_at,
                     ] : null,
+                    'permissions' => $permissions,
                 ],
                 'access_token' => [
                     'token' => $token,

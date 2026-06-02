@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use OpenApi\Attributes as OA;
+use App\Traits\HasDynamicFilter;
 
 class SppdApprovalController extends Controller
 {
+    use HasDynamicFilter;
     /**
      * APPROVE / REJECT / REVISION
      */
@@ -533,6 +535,502 @@ class SppdApprovalController extends Controller
         return response()->json([
             'status' => true,
             'data' => $data
+        ]);
+    }
+
+    #[OA\Get(
+        path: "/api/approval-list",
+        tags: ["SPPD Approval"],
+        summary: "Get list approval SPPD",
+        security: [["bearerAuth" => []]],
+
+        parameters: [
+
+            new OA\Parameter(
+                name: "approval_status",
+                in: "query",
+                required: false,
+                description: "Filter status approval SPPD",
+                schema: new OA\Schema(
+                    type: "string",
+                    example: "submitted"
+                )
+            ),
+
+            new OA\Parameter(
+                name: "approval_flow_id",
+                in: "query",
+                required: false,
+                description: "Filter approval flow",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
+            ),
+
+            new OA\Parameter(
+                name: "current_approval_level",
+                in: "query",
+                required: false,
+                description: "Filter current approval level",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
+            ),
+
+            new OA\Parameter(
+                name: "department_id",
+                in: "query",
+                required: false,
+                description: "Filter department",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
+            ),
+
+            new OA\Parameter(
+                name: "requester_id",
+                in: "query",
+                required: false,
+                description: "Filter requester",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 8
+                )
+            ),
+
+            new OA\Parameter(
+                name: "search",
+                in: "query",
+                required: false,
+                description: "Search sppd_number, cost_center, kegiatan, ringkasan_agenda",
+                schema: new OA\Schema(
+                    type: "string",
+                    example: "Meeting"
+                )
+            ),
+
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                required: false,
+                description: "Jumlah data per halaman",
+                schema: new OA\Schema(
+                    type: "integer",
+                    default: 10,
+                    example: 10
+                )
+            ),
+
+            new OA\Parameter(
+                name: "page",
+                in: "query",
+                required: false,
+                description: "Nomor halaman",
+                schema: new OA\Schema(
+                    type: "integer",
+                    example: 1
+                )
+            ),
+        ],
+
+        responses: [
+
+            new OA\Response(
+                response: 200,
+                description: "Success",
+
+                content: new OA\JsonContent(
+
+                    properties: [
+
+                        new OA\Property(
+                            property: "status",
+                            type: "boolean",
+                            example: true
+                        ),
+
+                        new OA\Property(
+                            property: "pagination",
+                            type: "object",
+
+                            properties: [
+
+                                new OA\Property(
+                                    property: "current_page",
+                                    type: "integer",
+                                    example: 1
+                                ),
+
+                                new OA\Property(
+                                    property: "last_page",
+                                    type: "integer",
+                                    example: 5
+                                ),
+
+                                new OA\Property(
+                                    property: "per_page",
+                                    type: "integer",
+                                    example: 10
+                                ),
+
+                                new OA\Property(
+                                    property: "total",
+                                    type: "integer",
+                                    example: 50
+                                ),
+                            ]
+                        ),
+
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+
+                            items: new OA\Items(
+
+                                properties: [
+
+                                    new OA\Property(
+                                        property: "id",
+                                        type: "integer",
+                                        example: 71
+                                    ),
+
+                                    new OA\Property(
+                                        property: "sppd_number",
+                                        type: "string",
+                                        example: "SPPD-20260529091359"
+                                    ),
+
+                                    new OA\Property(
+                                        property: "approval_status",
+                                        type: "string",
+                                        example: "submitted"
+                                    ),
+
+                                    new OA\Property(
+                                        property: "current_approval_level",
+                                        type: "integer",
+                                        example: 1
+                                    ),
+
+                                    new OA\Property(
+                                        property: "grand_total",
+                                        type: "number",
+                                        format: "float",
+                                        example: 4000000
+                                    ),
+
+                                    new OA\Property(
+                                        property: "requester",
+                                        type: "object",
+
+                                        properties: [
+
+                                            new OA\Property(
+                                                property: "id",
+                                                type: "integer",
+                                                example: 8
+                                            ),
+
+                                            new OA\Property(
+                                                property: "name",
+                                                type: "string",
+                                                example: "superAdmin"
+                                            ),
+                                        ]
+                                    ),
+
+                                    new OA\Property(
+                                        property: "approval_flow",
+                                        type: "object",
+
+                                        properties: [
+
+                                            new OA\Property(
+                                                property: "id",
+                                                type: "integer",
+                                                example: 1
+                                            ),
+
+                                            new OA\Property(
+                                                property: "name",
+                                                type: "string",
+                                                example: "Domestik Dalam Kota"
+                                            ),
+                                        ]
+                                    ),
+
+                                    new OA\Property(
+                                        property: "approvals",
+                                        type: "array",
+
+                                        items: new OA\Items(
+
+                                            properties: [
+
+                                                new OA\Property(
+                                                    property: "id",
+                                                    type: "integer",
+                                                    example: 54
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "approval_level",
+                                                    type: "integer",
+                                                    example: 1
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "approver_id",
+                                                    type: "integer",
+                                                    nullable: true,
+                                                    example: 8
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "approver_name",
+                                                    type: "string",
+                                                    nullable: true,
+                                                    example: "superAdmin"
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "approver_jabatan_id",
+                                                    type: "integer",
+                                                    nullable: true,
+                                                    example: 2
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "approver_jabatan_name",
+                                                    type: "string",
+                                                    nullable: true,
+                                                    example: "IT Manager"
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "status",
+                                                    type: "string",
+                                                    example: "approved"
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "notes",
+                                                    type: "string",
+                                                    nullable: true,
+                                                    example: "lv 1 ok"
+                                                ),
+
+                                                new OA\Property(
+                                                    property: "approved_at",
+                                                    type: "string",
+                                                    format: "date-time",
+                                                    nullable: true,
+                                                    example: "2026-05-29T09:43:53.000000Z"
+                                                ),
+                                            ]
+                                        )
+                                    ),
+                                ]
+                            )
+                        ),
+                    ]
+                )
+            ),
+
+            new OA\Response(
+                response: 401,
+                description: "Unauthorized"
+            ),
+
+            new OA\Response(
+                response: 403,
+                description: "Forbidden"
+            ),
+        ]
+    )]
+    public function list(Request $request)
+    {
+        $user = auth()->user();
+
+        $hasSuperAccess = $user->hasPermission('super.access');
+
+        $query = TrSppd::with([
+            'requester',
+            'approval_flow',
+            'approvals.approver',
+            'approvals.approverJabatan'
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | HIDE DRAFT
+        |--------------------------------------------------------------------------
+        */
+        $query->where('approval_status', '!=', 'draft');
+
+        /*
+        |--------------------------------------------------------------------------
+        | ACCESS FILTER
+        |--------------------------------------------------------------------------
+        */
+        if (!$hasSuperAccess) {
+
+            $query->whereHas('approvals', function ($q) use ($user) {
+
+                $q->where('approver_id', $user->id)
+                    ->whereRaw(
+                        'approval_level <= tr_sppds.current_approval_level + 1'
+                    );
+            });
+        }
+
+        $query = $this->applyFilters(
+            query: $query,
+            request: $request,
+
+            allowedFilters: [
+                'approval_status',
+                'approval_flow_id',
+                'current_approval_level',
+                'department_id',
+                'requester_id',
+            ],
+
+            searchableFields: [
+                'sppd_number',
+                'cost_center',
+                'kegiatan',
+                'ringkasan_agenda',
+            ]
+        );
+        /*
+        |--------------------------------------------------------------------------
+        | SORTING
+        |--------------------------------------------------------------------------
+        */
+        $query->latest('id');
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAGINATION
+        |--------------------------------------------------------------------------
+        */
+        $paginated = $query->paginate(
+            $request->get('per_page', 10)
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT RESPONSE
+        |--------------------------------------------------------------------------
+        */
+        $collection = $paginated->getCollection()->map(function ($item) {
+
+            return [
+
+                'id' => $item->id,
+
+                'sppd_number' => $item->sppd_number,
+
+                'jenis_dokumen' => $item->jenis_dokumen,
+
+                'cost_center' => $item->cost_center,
+
+                'kegiatan' => $item->kegiatan,
+
+                'ringkasan_agenda' => $item->ringkasan_agenda,
+
+                'approval_status' => $item->approval_status,
+
+                'current_approval_level' => $item->current_approval_level,
+
+                'grand_total' => $item->grand_total,
+
+                'created_at' => $item->created_at,
+
+                'updated_at' => $item->updated_at,
+
+                'requester' => $item->requester ? [
+
+                    'id' => $item->requester->id,
+
+                    'name' => encrypt_decrypt_db(
+                        'dec',
+                        $item->requester->name,
+                        $item->requester->id
+                    ),
+
+                ] : null,
+
+                'approval_flow' => $item->approval_flow ? [
+
+                    'id' => $item->approval_flow->id,
+
+                    'name' => $item->approval_flow->name,
+
+                ] : null,
+
+                'approvals' => $item->approvals
+                    ->filter(function ($approval) use ($item) {
+
+                        return $approval->approval_level
+                            <= ($item->current_approval_level + 1);
+
+                    })
+                    ->sortBy('approval_level')
+                    ->values()
+                    ->map(function ($approval) {
+
+                        return [
+
+                            'id' => $approval->id,
+
+                            'approval_level' => $approval->approval_level,
+
+                            'approver_id' => $approval->approver_id,
+
+                            'approver_name' => $approval->approver
+                                ? encrypt_decrypt_db(
+                                    'dec',
+                                    $approval->approver->name,
+                                    $approval->approver->id
+                                )
+                                : null,
+
+                            'approver_jabatan_id' => $approval->approver_jabatan_id,
+
+                            'approver_jabatan_name' => $approval->approverJabatan?->name,
+
+                            'status' => $approval->status,
+
+                            'notes' => $approval->notes,
+
+                            'approved_at' => $approval->approved_at,
+                        ];
+                    }),
+            ];
+        });
+
+        return response()->json([
+
+            'status' => true,
+
+            'pagination' => [
+
+                'current_page' => $paginated->currentPage(),
+
+                'last_page' => $paginated->lastPage(),
+
+                'per_page' => $paginated->perPage(),
+
+                'total' => $paginated->total(),
+            ],
+
+            'data' => $collection,
         ]);
     }
 }

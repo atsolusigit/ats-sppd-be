@@ -468,6 +468,15 @@ class SppdController extends Controller
                         example: "Pembahasan kerjasama project"
                     ),
 
+                    new OA\Property(
+                        property: "lampiran",
+                        type: "array",
+                        items: new OA\Items(
+                            type: "string"
+                        ),
+                        example: ["file1.pdf", "file2.docx"]
+                    ),
+
                     /*
                     |--------------------------------------------------------------------------
                     | PESERTA
@@ -728,6 +737,7 @@ class SppdController extends Controller
                 'approval_flow_id' => $request->approval_flow_id,
                 'kegiatan' => $request->kegiatan,
                 'ringkasan_agenda' => $request->ringkasan_agenda,
+                'lampiran' => $request->lampiran ?? [],
                 'requester_id' => auth()->id(),
                 'requester_department_id' => auth()->user()->department_id,
                 'requester_jabatan_id' => auth()->user()->jabatan_id,
@@ -886,6 +896,15 @@ class SppdController extends Controller
                         property: "ringkasan_agenda",
                         type: "string",
                         example: "Meeting kerja sama"
+                    ),
+
+                    new OA\Property(
+                        property: "lampiran",
+                        type: "array",
+                        items: new OA\Items(
+                            type: "string"
+                        ),
+                        example: ["file1.pdf", "file2.docx"]
                     ),
 
                     // PESERTA
@@ -1166,6 +1185,7 @@ class SppdController extends Controller
                 'jenis_dokumen' => $request->jenis_dokumen,
                 'cost_center' => $request->cost_center,
                 'approval_flow_id' => $request->approval_flow_id,
+                'lampiran' => $request->lampiran ?? [],
                 'kegiatan' => $request->kegiatan,
                 'ringkasan_agenda' => $request->ringkasan_agenda,
             ]);

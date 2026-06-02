@@ -2066,6 +2066,177 @@
                 ]
             }
         },
+        "/api/report": {
+            "get": {
+                "tags": [
+                    "SPPD Report"
+                ],
+                "summary": "List Report",
+                "description": "List Report",
+                "operationId": "d850be18b3947599144e07bdacd72841",
+                "parameters": [
+                    {
+                        "name": "sppd_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "SPPD Report"
+                ],
+                "summary": "Create Report Pertanggungjawaban",
+                "description": "Create / Update Report",
+                "operationId": "8db26b93ce99edf4899e468a09b81c19",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "sppd_id",
+                                    "tujuan_perjalanan",
+                                    "ringkasan_hasil_kegiatan"
+                                ],
+                                "properties": {
+                                    "sppd_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "tujuan_perjalanan": {
+                                        "type": "string",
+                                        "example": "Jakarta"
+                                    },
+                                    "ringkasan_hasil_kegiatan": {
+                                        "type": "string",
+                                        "example": "Menghadiri rapat koordinasi nasional"
+                                    },
+                                    "lampiran": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "https://files.company.com/report/foto1.jpg",
+                                            "https://files.company.com/report/notulen.pdf"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Report berhasil dibuat"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/report/{id}": {
+            "get": {
+                "tags": [
+                    "SPPD Report"
+                ],
+                "summary": "Detail Report",
+                "description": "Detail Report berdasarkan SPPD",
+                "operationId": "127c52fbf3e019ff7f9ff27da0debe08",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Report not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "SPPD Report"
+                ],
+                "summary": "Delete Report",
+                "description": "Delete Report",
+                "operationId": "f9b31c9eb47d12d5ef7b3c548635583e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Report berhasil dihapus"
+                    },
+                    "404": {
+                        "description": "Report tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/sppd/{id}/approval": {
             "post": {
                 "tags": [
@@ -2303,6 +2474,254 @@
                 ]
             }
         },
+        "/api/approval-list": {
+            "get": {
+                "tags": [
+                    "SPPD Approval"
+                ],
+                "summary": "Get list approval SPPD",
+                "operationId": "11ce7a3297f3420358a35e3aa868fdc2",
+                "parameters": [
+                    {
+                        "name": "approval_status",
+                        "in": "query",
+                        "description": "Filter status approval SPPD",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "submitted"
+                        }
+                    },
+                    {
+                        "name": "approval_flow_id",
+                        "in": "query",
+                        "description": "Filter approval flow",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "current_approval_level",
+                        "in": "query",
+                        "description": "Filter current approval level",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "description": "Filter department",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "requester_id",
+                        "in": "query",
+                        "description": "Filter requester",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 8
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search sppd_number, cost_center, kegiatan, ringkasan_agenda",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Meeting"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10,
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 71
+                                                    },
+                                                    "sppd_number": {
+                                                        "type": "string",
+                                                        "example": "SPPD-20260529091359"
+                                                    },
+                                                    "approval_status": {
+                                                        "type": "string",
+                                                        "example": "submitted"
+                                                    },
+                                                    "current_approval_level": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "grand_total": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4000000
+                                                    },
+                                                    "requester": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 8
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "superAdmin"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "approval_flow": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Domestik Dalam Kota"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "approvals": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 54
+                                                                },
+                                                                "approval_level": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "approver_id": {
+                                                                    "type": "integer",
+                                                                    "example": 8,
+                                                                    "nullable": true
+                                                                },
+                                                                "approver_name": {
+                                                                    "type": "string",
+                                                                    "example": "superAdmin",
+                                                                    "nullable": true
+                                                                },
+                                                                "approver_jabatan_id": {
+                                                                    "type": "integer",
+                                                                    "example": 2,
+                                                                    "nullable": true
+                                                                },
+                                                                "approver_jabatan_name": {
+                                                                    "type": "string",
+                                                                    "example": "IT Manager",
+                                                                    "nullable": true
+                                                                },
+                                                                "status": {
+                                                                    "type": "string",
+                                                                    "example": "approved"
+                                                                },
+                                                                "notes": {
+                                                                    "type": "string",
+                                                                    "example": "lv 1 ok",
+                                                                    "nullable": true
+                                                                },
+                                                                "approved_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2026-05-29T09:43:53.000000Z",
+                                                                    "nullable": true
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/sppd": {
             "get": {
                 "tags": [
@@ -2467,6 +2886,16 @@
                                     "ringkasan_agenda": {
                                         "type": "string",
                                         "example": "Pembahasan kerjasama project"
+                                    },
+                                    "lampiran": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "file1.pdf",
+                                            "file2.docx"
+                                        ]
                                     },
                                     "peserta": {
                                         "type": "array",
@@ -2717,6 +3146,16 @@
                                     "ringkasan_agenda": {
                                         "type": "string",
                                         "example": "Meeting kerja sama"
+                                    },
+                                    "lampiran": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "file1.pdf",
+                                            "file2.docx"
+                                        ]
                                     },
                                     "peserta": {
                                         "type": "array",
@@ -3222,16 +3661,6 @@
                         }
                     },
                     {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Search by decrypted name/email",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "john"
-                        }
-                    },
-                    {
                         "name": "page",
                         "in": "query",
                         "description": "Pagination page",
@@ -3294,11 +3723,15 @@
                                                     },
                                                     "name": {
                                                         "type": "string",
-                                                        "example": "john_doe"
+                                                        "example": "John Doe"
                                                     },
                                                     "email": {
                                                         "type": "string",
                                                         "example": "john@gmail.com"
+                                                    },
+                                                    "username": {
+                                                        "type": "string",
+                                                        "example": "john_doe"
                                                     },
                                                     "status": {
                                                         "type": "integer",
@@ -3325,6 +3758,184 @@
                     },
                     "401": {
                         "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user detail",
+                "operationId": "36a33ff774d5cba33c039dec2c3e0287",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "type": "integer"
+                                                },
+                                                "role": {
+                                                    "type": "object"
+                                                },
+                                                "jabatan": {
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user",
+                "operationId": "b9091397c8b25f12c6adb74be6ce3a5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john2@gmail.com"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "john_updated"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "newpass123"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "role_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "jabatan_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user",
+                "operationId": "fa56cffde745d3f152f95cbacd936c0b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully"
+                    },
+                    "404": {
+                        "description": "User not found"
                     }
                 },
                 "security": [
@@ -3376,6 +3987,10 @@
         {
             "name": "Permissions",
             "description": "Permissions"
+        },
+        {
+            "name": "SPPD Report",
+            "description": "SPPD Report"
         },
         {
             "name": "SPPD Approval",
