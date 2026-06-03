@@ -81,7 +81,6 @@ class UserApprovalController extends Controller
                 in: "path",
                 required: true,
                 description: "User ID",
-                example: 5
             )
         ],
         requestBody: new OA\RequestBody(
@@ -147,7 +146,6 @@ class UserApprovalController extends Controller
                 in: "path",
                 required: true,
                 description: "User ID",
-                example: 5
             )
         ],
         requestBody: new OA\RequestBody(

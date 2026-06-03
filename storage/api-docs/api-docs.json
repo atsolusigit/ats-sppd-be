@@ -89,11 +89,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the approval flow",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -176,11 +176,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the approval flow",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -206,11 +206,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the approval flow",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -509,11 +509,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the department",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "requestBody": {
@@ -561,11 +561,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the department",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -591,11 +591,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the department",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -729,8 +729,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the email domain",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -772,8 +772,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the email domain",
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -819,8 +819,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the email domain",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -859,33 +859,34 @@
                     {
                         "name": "id",
                         "in": "query",
+                        "description": "ID of the jabatan approval",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     },
                     {
                         "name": "approval_flow_id",
                         "in": "query",
+                        "description": "ID of the approval flow [1, 2, 3]",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     },
                     {
                         "name": "approval_order",
                         "in": "query",
+                        "description": "Order of the approval",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     },
                     {
                         "name": "approval_mode",
                         "in": "query",
+                        "description": "Mode of the approval",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -896,93 +897,93 @@
                                 "role",
                                 "user"
                             ]
-                        },
-                        "example": "hierarchy"
+                        }
                     },
                     {
                         "name": "target_level",
                         "in": "query",
+                        "description": "Target level for the approval",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 2
+                        }
                     },
                     {
                         "name": "target_jabatan_id",
                         "in": "query",
+                        "description": "ID of the target jabatan",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 3
+                        }
                     },
                     {
                         "name": "target_department_id",
                         "in": "query",
+                        "description": "ID of the target department",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     },
                     {
                         "name": "target_role_id",
                         "in": "query",
+                        "description": "ID of the target role",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     },
                     {
                         "name": "target_user_id",
                         "in": "query",
+                        "description": "ID of the target user",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 10
+                        }
                     },
                     {
                         "name": "is_required",
                         "in": "query",
+                        "description": "Indicates if the approval is required",
                         "required": false,
                         "schema": {
                             "type": "boolean"
-                        },
-                        "example": true
+                        }
                     },
                     {
                         "name": "page",
                         "in": "query",
+                        "description": "Current page for pagination",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     },
                     {
                         "name": "per_page",
                         "in": "query",
+                        "description": "Number of items per page",
                         "required": false,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 10
+                        }
                     },
                     {
                         "name": "sort_by",
                         "in": "query",
+                        "description": "Column to sort by",
                         "required": false,
                         "schema": {
                             "type": "string"
-                        },
-                        "example": "approval_order"
+                        }
                     },
                     {
                         "name": "sort_dir",
                         "in": "query",
+                        "description": "Sort direction",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -990,8 +991,7 @@
                                 "asc",
                                 "desc"
                             ]
-                        },
-                        "example": "asc"
+                        }
                     }
                 ],
                 "responses": {
@@ -1170,11 +1170,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the jabatan approval",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -1354,11 +1354,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the jabatan",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -1382,11 +1382,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the jabatan",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "requestBody": {
@@ -1438,11 +1438,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the jabatan",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -1468,11 +1468,11 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID of the jabatan",
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -1569,8 +1569,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the role",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1597,8 +1597,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the role",
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -1660,8 +1660,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the role",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1690,8 +1690,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the role",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1724,8 +1724,7 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
-                        },
-                        "example": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -1807,8 +1806,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the role",
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -1967,8 +1966,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the permission",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1995,8 +1994,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the permission",
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -2047,8 +2046,8 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "required": true,
-                        "example": 1
+                        "description": "ID of the permission",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2252,8 +2251,8 @@
                         "description": "SPPD ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "description": "SPPD ID",
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2386,8 +2385,7 @@
                         "description": "SPPD ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2488,8 +2486,7 @@
                         "description": "Filter status approval SPPD",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "submitted"
+                            "type": "string"
                         }
                     },
                     {
@@ -2498,8 +2495,7 @@
                         "description": "Filter approval flow",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     },
                     {
@@ -2508,8 +2504,7 @@
                         "description": "Filter current approval level",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     },
                     {
@@ -2518,18 +2513,7 @@
                         "description": "Filter department",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "approval_level",
-                        "in": "query",
-                        "description": "Filter approval level",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     },
                     {
@@ -2538,8 +2522,7 @@
                         "description": "Filter requester",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 8
+                            "type": "integer"
                         }
                     },
                     {
@@ -2548,8 +2531,7 @@
                         "description": "Search sppd_number, cost_center, kegiatan, ringkasan_agenda",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "Meeting"
+                            "type": "string"
                         }
                     },
                     {
@@ -2559,7 +2541,6 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 10,
                             "default": 10
                         }
                     },
@@ -2569,8 +2550,7 @@
                         "description": "Nomor halaman",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
@@ -2747,8 +2727,7 @@
                         "description": "Search keyword",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "Meeting Jakarta"
+                            "type": "string"
                         }
                     },
                     {
@@ -2758,7 +2737,6 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "submitted",
                             "enum": [
                                 "draft",
                                 "submitted",
@@ -2776,8 +2754,7 @@
                         "description": "Filter approval flow",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     },
                     {
@@ -2786,8 +2763,7 @@
                         "description": "Filter department",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     },
                     {
@@ -2796,8 +2772,7 @@
                         "description": "Sort field",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "created_at"
+                            "type": "string"
                         }
                     },
                     {
@@ -2807,7 +2782,6 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "desc",
                             "enum": [
                                 "asc",
                                 "desc"
@@ -2820,8 +2794,7 @@
                         "description": "Pagination per page",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 10
+                            "type": "integer"
                         }
                     }
                 ],
@@ -3446,6 +3419,129 @@
                 ]
             }
         },
+        "/api/sppd/realisasi": {
+            "put": {
+                "tags": [
+                    "SPPD Realisasi"
+                ],
+                "summary": "Update realisasi biaya SPPD",
+                "operationId": "0142fee03cb2279f2bf7d0fc6d25323a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "sppd_id"
+                                ],
+                                "properties": {
+                                    "sppd_id": {
+                                        "type": "integer",
+                                        "example": 71
+                                    },
+                                    "transportations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "actual_biaya": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 850000
+                                                },
+                                                "keterangan_realisasi": {
+                                                    "type": "string",
+                                                    "example": "Harga tiket aktual"
+                                                },
+                                                "lampiran": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "https://domain.com/upload/tiket1.pdf",
+                                                        "https://domain.com/upload/tiket2.pdf"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "accommodations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "actual_biaya": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 1500000
+                                                },
+                                                "keterangan_realisasi": {
+                                                    "type": "string",
+                                                    "example": "Biaya hotel aktual"
+                                                },
+                                                "lampiran": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "https://domain.com/upload/hotel1.pdf",
+                                                        "https://domain.com/upload/hotel2.pdf"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Realisasi berhasil disimpan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Realisasi berhasil disimpan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/users/pending": {
             "get": {
                 "tags": [
@@ -3526,8 +3622,7 @@
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true,
-                        "example": 5
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -3583,8 +3678,7 @@
                         "name": "id",
                         "in": "path",
                         "description": "User ID",
-                        "required": true,
-                        "example": 5
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -4009,6 +4103,10 @@
         {
             "name": "SPPD",
             "description": "SPPD"
+        },
+        {
+            "name": "SPPD Realisasi",
+            "description": "SPPD Realisasi"
         },
         {
             "name": "User Approval",

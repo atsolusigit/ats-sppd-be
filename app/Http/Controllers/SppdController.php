@@ -30,7 +30,6 @@ class SppdController extends Controller
                 description: "Search keyword",
                 schema: new OA\Schema(
                     type: "string",
-                    example: "Meeting Jakarta"
                 )
             ),
 
@@ -41,7 +40,6 @@ class SppdController extends Controller
                 description: "Filter approval status",
                 schema: new OA\Schema(
                     type: "string",
-                    example: "submitted",
                     enum: ["draft","submitted","approved","rejected","revision","cancelled","completed"]
                 )
             ),
@@ -53,7 +51,6 @@ class SppdController extends Controller
                 description: "Filter approval flow",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
 
@@ -64,7 +61,6 @@ class SppdController extends Controller
                 description: "Filter department",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
 
@@ -75,7 +71,6 @@ class SppdController extends Controller
                 description: "Sort field",
                 schema: new OA\Schema(
                     type: "string",
-                    example: "created_at"
                 )
             ),
 
@@ -87,7 +82,6 @@ class SppdController extends Controller
                 schema: new OA\Schema(
                     type: "string",
                     enum: ["asc", "desc"],
-                    example: "desc"
                 )
             ),
 
@@ -98,7 +92,6 @@ class SppdController extends Controller
                 description: "Pagination per page",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 10
                 )
             ),
         ],
