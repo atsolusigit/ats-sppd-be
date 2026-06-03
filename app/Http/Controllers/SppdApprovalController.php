@@ -881,9 +881,9 @@ class SppdApprovalController extends Controller
 
             $query->whereHas('approvals', function ($q) use ($user) {
 
-                $q->where('approver_id', $user->id)
+                $q->where('approver_jabatan_id', $user->jabatan_id)
                     ->whereRaw(
-                        'approval_level <= tr_sppds.current_approval_level + 1'
+                        'approval_level <= tr_sppd.current_approval_level + 1'
                     );
             });
         }
@@ -919,6 +919,15 @@ class SppdApprovalController extends Controller
         | PAGINATION
         |--------------------------------------------------------------------------
         */
+        $approvalLevelFilter = $request->get('approval_level');
+        if (!empty($approvalLevelFilter)) {
+
+        $query->where(
+            'current_approval_level',
+            '>=',
+            ((int)$approvalLevelFilter - 1)
+        );
+}
         $paginated = $query->paginate(
             $request->get('per_page', 10)
         );
@@ -928,62 +937,82 @@ class SppdApprovalController extends Controller
         | FORMAT RESPONSE
         |--------------------------------------------------------------------------
         */
-        $collection = $paginated->getCollection()->map(function ($item) {
+        $collection = $paginated->getCollection()->map(
+            function ($item) use ($user, $hasSuperAccess, $approvalLevelFilter) {
 
-            return [
+                $approvals = $item->approvals
+                    ->filter(function ($approval) use (
+                        $user,
+                        $hasSuperAccess,
+                        $approvalLevelFilter,
+                    ) {
 
-                'id' => $item->id,
+                        // filter approval level
+                        if (!empty($approvalLevelFilter)) {
 
-                'sppd_number' => $item->sppd_number,
+                            if (
+                                $approval->approval_level !=
+                                (int) $approvalLevelFilter
+                            ) {
+                                return false;
+                            }
+                        }
 
-                'jenis_dokumen' => $item->jenis_dokumen,
+                        // super access lihat semua
+                        if ($hasSuperAccess) {
+                            return true;
+                        }
 
-                'cost_center' => $item->cost_center,
-
-                'kegiatan' => $item->kegiatan,
-
-                'ringkasan_agenda' => $item->ringkasan_agenda,
-
-                'approval_status' => $item->approval_status,
-
-                'current_approval_level' => $item->current_approval_level,
-
-                'grand_total' => $item->grand_total,
-
-                'created_at' => $item->created_at,
-
-                'updated_at' => $item->updated_at,
-
-                'requester' => $item->requester ? [
-
-                    'id' => $item->requester->id,
-
-                    'name' => encrypt_decrypt_db(
-                        'dec',
-                        $item->requester->name,
-                        $item->requester->id
-                    ),
-
-                ] : null,
-
-                'approval_flow' => $item->approval_flow ? [
-
-                    'id' => $item->approval_flow->id,
-
-                    'name' => $item->approval_flow->name,
-
-                ] : null,
-
-                'approvals' => $item->approvals
-                    ->filter(function ($approval) use ($item) {
-
-                        return $approval->approval_level
-                            <= ($item->current_approval_level + 1);
-
+                        // user biasa hanya lihat approval sesuai jabatannya
+                        return $approval->approver_jabatan_id == $user->jabatan_id;
                     })
                     ->sortBy('approval_level')
-                    ->values()
-                    ->map(function ($approval) {
+                    ->values();
+                return [
+
+                    'id' => $item->id,
+
+                    'sppd_number' => $item->sppd_number,
+
+                    'jenis_dokumen' => $item->jenis_dokumen,
+
+                    'cost_center' => $item->cost_center,
+
+                    'kegiatan' => $item->kegiatan,
+
+                    'ringkasan_agenda' => $item->ringkasan_agenda,
+
+                    'approval_status' => $item->approval_status,
+
+                    'current_approval_level' => $item->current_approval_level,
+
+                    'grand_total' => $item->grand_total,
+
+                    'created_at' => $item->created_at,
+
+                    'updated_at' => $item->updated_at,
+
+                    'requester' => $item->requester ? [
+
+                        'id' => $item->requester->id,
+
+                        'name' => encrypt_decrypt_db(
+                            'dec',
+                            $item->requester->name,
+                            $item->requester->id
+                        ),
+
+                    ] : null,
+
+                    'approval_flow' => $item->approval_flow ? [
+
+                        'id' => $item->approval_flow->id,
+
+                        'name' => $item->approval_flow->name,
+
+                    ] : null,
+
+                    'approvals' => $approvals->map(function ($approval) {
 
                         return [
 
@@ -1012,8 +1041,9 @@ class SppdApprovalController extends Controller
                             'approved_at' => $approval->approved_at,
                         ];
                     }),
-            ];
-        });
+                ];
+            }
+        );
 
         return response()->json([
 
