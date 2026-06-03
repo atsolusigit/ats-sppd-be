@@ -90,7 +90,7 @@ class DepartmentController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the department"
             )
         ],
         requestBody: new OA\RequestBody(
@@ -153,7 +153,7 @@ class DepartmentController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the department"
             )
         ],
         responses: [
@@ -201,7 +201,7 @@ class DepartmentController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the department"
             )
         ],
         responses: [

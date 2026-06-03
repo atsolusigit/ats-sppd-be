@@ -294,3 +294,9 @@ Route::middleware(['auth:api'])->group(function () {
         ->middleware('permission:report.delete');
 
 });
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::put('/sppd/realisasi',[SppdRealisasiController::class, 'update']
+    )->middleware('permission:sppd.realisasi');
+});

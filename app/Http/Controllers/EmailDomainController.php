@@ -100,7 +100,7 @@ class EmailDomainController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the email domain"
             )
         ],
         responses: [
@@ -150,7 +150,7 @@ class EmailDomainController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the email domain"
             )
         ],
         responses: [
@@ -184,7 +184,7 @@ class EmailDomainController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the email domain"
             )
         ],
         requestBody: new OA\RequestBody(

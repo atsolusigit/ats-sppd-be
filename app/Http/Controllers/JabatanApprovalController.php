@@ -23,7 +23,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the jabatan approval"
             ),
 
             new OA\Parameter(
@@ -31,7 +31,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the approval flow [1, 2, 3]"
             ),
 
             new OA\Parameter(
@@ -39,7 +39,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "Order of the approval"
             ),
 
             new OA\Parameter(
@@ -56,7 +56,7 @@ class JabatanApprovalController extends Controller
                         "user"
                     ]
                 ),
-                example: "hierarchy"
+                description: "Mode of the approval"
             ),
 
             new OA\Parameter(
@@ -64,7 +64,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 2
+                description: "Target level for the approval"
             ),
 
             new OA\Parameter(
@@ -72,7 +72,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 3
+                description: "ID of the target jabatan"
             ),
 
             new OA\Parameter(
@@ -80,7 +80,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the target department"
             ),
 
             new OA\Parameter(
@@ -88,7 +88,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the target role"
             ),
 
             new OA\Parameter(
@@ -96,7 +96,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 10
+                description: "ID of the target user"
             ),
 
             new OA\Parameter(
@@ -104,7 +104,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "boolean"),
-                example: true
+                description: "Indicates if the approval is required"
             ),
 
             new OA\Parameter(
@@ -112,7 +112,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "Current page for pagination"
             ),
 
             new OA\Parameter(
@@ -120,7 +120,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "integer"),
-                example: 10
+                description: "Number of items per page"
             ),
 
             new OA\Parameter(
@@ -128,7 +128,7 @@ class JabatanApprovalController extends Controller
                 in: "query",
                 required: false,
                 schema: new OA\Schema(type: "string"),
-                example: "approval_order"
+                description: "Column to sort by"
             ),
 
             new OA\Parameter(
@@ -139,7 +139,7 @@ class JabatanApprovalController extends Controller
                     type: "string",
                     enum: ["asc", "desc"]
                 ),
-                example: "asc"
+                description: "Sort direction"
             ),
         ],
 
@@ -364,7 +364,7 @@ class JabatanApprovalController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the jabatan approval"
             )
         ],
         responses: [

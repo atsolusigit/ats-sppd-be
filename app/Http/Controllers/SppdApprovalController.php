@@ -34,7 +34,7 @@ class SppdApprovalController extends Controller
                 description: "SPPD ID",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
+                    description: "SPPD ID"
                 )
             ),
         ],
@@ -382,7 +382,6 @@ class SppdApprovalController extends Controller
                 description: "SPPD ID",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
         ],
@@ -553,7 +552,6 @@ class SppdApprovalController extends Controller
                 description: "Filter status approval SPPD",
                 schema: new OA\Schema(
                     type: "string",
-                    example: "submitted"
                 )
             ),
 
@@ -564,7 +562,6 @@ class SppdApprovalController extends Controller
                 description: "Filter approval flow",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
 
@@ -575,7 +572,6 @@ class SppdApprovalController extends Controller
                 description: "Filter current approval level",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
 
@@ -586,7 +582,6 @@ class SppdApprovalController extends Controller
                 description: "Filter department",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
 
@@ -597,7 +592,6 @@ class SppdApprovalController extends Controller
                 description: "Filter requester",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 8
                 )
             ),
 
@@ -608,7 +602,6 @@ class SppdApprovalController extends Controller
                 description: "Search sppd_number, cost_center, kegiatan, ringkasan_agenda",
                 schema: new OA\Schema(
                     type: "string",
-                    example: "Meeting"
                 )
             ),
 
@@ -620,7 +613,6 @@ class SppdApprovalController extends Controller
                 schema: new OA\Schema(
                     type: "integer",
                     default: 10,
-                    example: 10
                 )
             ),
 
@@ -631,7 +623,6 @@ class SppdApprovalController extends Controller
                 description: "Nomor halaman",
                 schema: new OA\Schema(
                     type: "integer",
-                    example: 1
                 )
             ),
         ],

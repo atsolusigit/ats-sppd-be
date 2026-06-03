@@ -57,7 +57,7 @@ class PermissionController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the permission"
             )
         ],
         responses: [
@@ -149,7 +149,7 @@ class PermissionController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the permission"
             )
         ],
         requestBody: new OA\RequestBody(
@@ -215,7 +215,7 @@ class PermissionController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the permission"
             )
         ],
         responses: [

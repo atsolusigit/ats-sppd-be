@@ -45,7 +45,7 @@ class ApprovalFlowController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the approval flow"
             )
         ],
         responses: [
@@ -208,7 +208,7 @@ class ApprovalFlowController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the approval flow"
             )
         ],
         responses: [
@@ -249,7 +249,7 @@ class ApprovalFlowController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the approval flow"
             )
         ],
         responses: [

@@ -46,7 +46,7 @@ class JabatanController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the jabatan"
             )
         ],
         responses: [
@@ -140,7 +140,7 @@ class JabatanController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the jabatan"
             )
         ],
         requestBody: new OA\RequestBody(
@@ -206,7 +206,7 @@ class JabatanController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the jabatan"
             )
         ],
         responses: [
@@ -247,7 +247,7 @@ class JabatanController extends Controller
                 in: "path",
                 required: true,
                 schema: new OA\Schema(type: "integer"),
-                example: 1
+                description: "ID of the jabatan"
             )
         ],
         responses: [

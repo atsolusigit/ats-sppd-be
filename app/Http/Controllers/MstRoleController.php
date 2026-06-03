@@ -42,7 +42,7 @@ class MstRoleController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the role"
             )
         ],
         responses: [
@@ -136,7 +136,7 @@ class MstRoleController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the role"
             )
         ],
         requestBody: new OA\RequestBody(
@@ -207,7 +207,7 @@ class MstRoleController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the role"
             )
         ],
         responses: [
@@ -254,7 +254,7 @@ class MstRoleController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the role"
             )
         ],
         responses: [
@@ -297,7 +297,7 @@ class MstRoleController extends Controller
                 name: "id",
                 in: "path",
                 required: true,
-                example: 1
+                description: "ID of the role"
             )
         ],
         requestBody: new OA\RequestBody(
@@ -357,7 +357,6 @@ class MstRoleController extends Controller
                 required: true,
                 description: "Role ID",
                 schema: new OA\Schema(type: "integer"),
-                example: 1
             )
         ],
         responses: [
