@@ -2523,6 +2523,16 @@
                         }
                     },
                     {
+                        "name": "approval_level",
+                        "in": "query",
+                        "description": "Filter approval level",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
                         "name": "requester_id",
                         "in": "query",
                         "description": "Filter requester",
