@@ -157,7 +157,7 @@ class SppdController extends Controller
         if (!$user->hasPermission('sppd.view.all')) {
 
             $query->whereHas('requester', function ($q) use ($user) {
-                $q->where('division_id', $user->division_id);
+                $q->where('requester_id', $user->id);
                 
             });
         }
