@@ -13,6 +13,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SppdController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SppdApprovalController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SppdRealisasiController;
 
 // ============================
 //  Auth Routes (tanpa token)
