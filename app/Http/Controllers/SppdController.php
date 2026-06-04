@@ -1232,7 +1232,7 @@ class SppdController extends Controller
             if (
                 !$user->hasPermission('sppd.update.all')
                 &&
-                $sppd->status !== 'draft' || $sppd->status === 'rejected'
+                !in_array($sppd->approval_status, ['draft', 'rejected'])
             ) {
 
                 return response()->json([
@@ -1450,7 +1450,7 @@ class SppdController extends Controller
         if (
             !$user->hasPermission('sppd.delete.all')
             &&
-            $sppd->status !== 'draft'
+            $sppd->approval_status !== 'draft'
         ) {
 
             return response()->json([
