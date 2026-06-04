@@ -323,6 +323,20 @@ class SppdApprovalController extends Controller
             } elseif ($request->status === 'revision') {
 
                 $sppd->approval_status = 'revision';
+            }elseif ($request->status === 'cancelled') {
+
+                if (!in_array($sppd->approval_status, [
+                    'approved',
+                    'rejected'
+                ])) {
+
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'SPPD hanya dapat dibatalkan jika status saat ini approved atau rejected'
+                    ], 422);
+                }
+
+                $sppd->approval_status = 'cancelled';
             }
 
             $sppd->save();
