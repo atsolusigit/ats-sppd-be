@@ -26,13 +26,18 @@ class TrSppdTransportasi extends Model
 
         'keterangan',
 
+        'keterangan_realisasi',
+        'actual_biaya',
+
         'nama_lengkap',
         'no_hp',
     ];
 
     protected $casts = [
+        'lampiran' => 'array',
         'estimasi_biaya' => 'float',
         'waktu' => 'datetime',
+        'actual_biaya' => 'float',
     ];
 
     /*
