@@ -45,6 +45,7 @@ class TrSppd extends Model
     ];
 
     protected $casts = [
+        'lampiran' => 'array',
         'total_transport' => 'float',
         'total_accommodation' => 'float',
         'grand_total' => 'float',
