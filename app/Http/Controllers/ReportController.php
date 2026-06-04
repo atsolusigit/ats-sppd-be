@@ -105,6 +105,9 @@ class ReportController extends Controller
                     'updated_by' => auth()->id(),
                 ]
             );
+            $sppd->update([
+                'approval_status' => 'completed'
+            ]);
 
             DB::commit();
 

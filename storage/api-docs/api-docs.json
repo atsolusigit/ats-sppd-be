@@ -2733,11 +2733,10 @@
                     {
                         "name": "approval_status",
                         "in": "query",
-                        "description": "Multiple status separated by comma",
+                        "description": "Multiple status separated by comma draft,submitted,approved,rejected,revision,cancelled,completed",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "approved,completed"
+                            "type": "string"
                         }
                     },
                     {
@@ -2756,6 +2755,21 @@
                         "required": false,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "mode",
+                        "in": "query",
+                        "description": "Filter mode data SPPD",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pengajuan",
+                                "realisasi",
+                                "report",
+                                "history"
+                            ]
                         }
                     },
                     {

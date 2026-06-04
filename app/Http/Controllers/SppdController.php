@@ -39,8 +39,7 @@ class SppdController extends Controller
                 required: false,
                 description: "Multiple status separated by comma draft,submitted,approved,rejected,revision,cancelled,completed",
                 schema: new OA\Schema(
-                    type: "string",schema: new OA\Schema(
-                )
+                    type: "string",
                 )
             ),
 
@@ -61,6 +60,22 @@ class SppdController extends Controller
                 description: "Filter department",
                 schema: new OA\Schema(
                     type: "integer",
+                )
+            ),
+
+            new OA\Parameter(
+                name: "mode",
+                in: "query",
+                required: false,
+                description: "Filter mode data SPPD",
+                schema: new OA\Schema(
+                    type: "string",
+                    enum: [
+                        "pengajuan",
+                        "realisasi",
+                        "report",
+                        "history"
+                    ]
                 )
             ),
 
@@ -147,6 +162,52 @@ class SppdController extends Controller
             });
         }
 
+        if ($request->filled('mode')) {
+
+            switch ($request->mode) {
+
+                case 'pengajuan':
+
+                    $query->whereIn('approval_status', [
+                        'draft',
+                        'submitted',
+                        'rejected',
+                    ]);
+
+                    break;
+
+                case 'realisasi':
+
+                    $query->where('approval_status', 'approved');
+
+                    break;
+
+                case 'report':
+
+                    $query->where(function ($q) {
+
+                        $q->whereHas('peserta.transportasi', function ($t) {
+                            $t->whereNotNull('actual_biaya');
+                        })
+                        ->orWhereHas('peserta.penginapan', function ($p) {
+                            $p->whereNotNull('actual_biaya');
+                        });
+
+                    });
+
+                    break;
+
+                case 'history':
+
+                    $query->whereIn('approval_status', [
+                        'completed',
+                        'cancelled',
+                    ]);
+
+                    break;
+            }
+        }
+
         /*
         |--------------------------------------------------------------------------
         | DYNAMIC FILTER
@@ -179,7 +240,18 @@ class SppdController extends Controller
         | SORTING (optional tapi bagus)
         |--------------------------------------------------------------------------
         */
-        $query->latest('id');
+        $query->orderByRaw("
+            FIELD(
+                approval_status,
+                'draft',
+                'submitted',
+                'approved',
+                'rejected',
+                'revision',
+                'completed',
+                'cancelled'
+            )
+        ")->latest('id');
 
         /*
         |--------------------------------------------------------------------------
