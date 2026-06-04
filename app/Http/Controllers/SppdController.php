@@ -37,10 +37,10 @@ class SppdController extends Controller
                 name: "approval_status",
                 in: "query",
                 required: false,
-                description: "Filter approval status",
+                description: "Multiple status separated by comma draft,submitted,approved,rejected,revision,cancelled,completed",
                 schema: new OA\Schema(
-                    type: "string",
-                    enum: ["draft","submitted","approved","rejected","revision","cancelled","completed"]
+                    type: "string",schema: new OA\Schema(
+                )
                 )
             ),
 
@@ -171,7 +171,7 @@ class SppdController extends Controller
                 'cost_center',
                 'kegiatan',
                 'ringkasan_agenda',
-            ]
+            ]   
         );
 
         /*

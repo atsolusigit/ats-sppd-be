@@ -2065,14 +2065,14 @@
                 ]
             }
         },
-        "/api/report": {
+        "/api/reports": {
             "get": {
                 "tags": [
                     "SPPD Report"
                 ],
                 "summary": "List Report",
                 "description": "List Report",
-                "operationId": "d850be18b3947599144e07bdacd72841",
+                "operationId": "42398321972bc3074eef76718e0fd9dc",
                 "parameters": [
                     {
                         "name": "sppd_id",
@@ -2117,7 +2117,7 @@
                 ],
                 "summary": "Create Report Pertanggungjawaban",
                 "description": "Create / Update Report",
-                "operationId": "8db26b93ce99edf4899e468a09b81c19",
+                "operationId": "318de4ef8123b483320dc9dbb45b6a43",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2172,14 +2172,14 @@
                 ]
             }
         },
-        "/api/report/{id}": {
+        "/api/reports/{id}": {
             "get": {
                 "tags": [
                     "SPPD Report"
                 ],
                 "summary": "Detail Report",
                 "description": "Detail Report berdasarkan SPPD",
-                "operationId": "127c52fbf3e019ff7f9ff27da0debe08",
+                "operationId": "a4c119b5a8302fa439721ad28809a1fe",
                 "parameters": [
                     {
                         "name": "id",
@@ -2210,7 +2210,7 @@
                 ],
                 "summary": "Delete Report",
                 "description": "Delete Report",
-                "operationId": "f9b31c9eb47d12d5ef7b3c548635583e",
+                "operationId": "a577f2ba73f34e6564524e2163d9bcdf",
                 "parameters": [
                     {
                         "name": "id",
@@ -2733,19 +2733,11 @@
                     {
                         "name": "approval_status",
                         "in": "query",
-                        "description": "Filter approval status",
+                        "description": "Multiple status separated by comma",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "enum": [
-                                "draft",
-                                "submitted",
-                                "approved",
-                                "rejected",
-                                "revision",
-                                "cancelled",
-                                "completed"
-                            ]
+                            "example": "approved,completed"
                         }
                     },
                     {

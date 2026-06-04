@@ -16,7 +16,7 @@ class ReportController extends Controller
      */
 
     #[OA\Post(
-        path: "/api/report",
+        path: "/api/reports",
         tags: ["SPPD Report"],
         summary: "Create Report Pertanggungjawaban",
         security: [["bearerAuth" => []]],
@@ -132,7 +132,7 @@ class ReportController extends Controller
      */
 
     #[OA\Get(
-        path: "/api/report/{id}",
+        path: "/api/reports/{id}",
         tags: ["SPPD Report"],
         summary: "Detail Report",
         security: [["bearerAuth" => []]],
@@ -189,7 +189,7 @@ class ReportController extends Controller
      */
 
     #[OA\Get(
-        path: "/api/report",
+        path: "/api/reports",
         tags: ["SPPD Report"],
         summary: "List Report",
         security: [["bearerAuth" => []]],
@@ -269,7 +269,7 @@ class ReportController extends Controller
      */
 
     #[OA\Delete(
-        path: "/api/report/{id}",
+        path: "/api/reports/{id}",
         tags: ["SPPD Report"],
         summary: "Delete Report",
         security: [["bearerAuth" => []]],
