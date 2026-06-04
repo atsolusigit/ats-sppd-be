@@ -25,14 +25,19 @@ class TrSppdPenginapan extends Model
 
         'keterangan',
 
+        'keterangan_realisasi',
+        'actual_biaya',
+
         'nama_lengkap',
         'no_hp',
     ];
 
     protected $casts = [
+        'lampiran' => 'array',
         'check_in' => 'date',
         'check_out' => 'date',
         'estimasi_biaya' => 'float',
+        'actual_biaya' => 'float',
     ];
 
     /*

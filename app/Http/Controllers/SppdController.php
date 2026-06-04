@@ -157,7 +157,7 @@ class SppdController extends Controller
         if (!$user->hasPermission('sppd.view.all')) {
 
             $query->whereHas('requester', function ($q) use ($user) {
-                $q->where('requester_id', $user->id);
+                $q->where('department_id', $user->department_id);
                 
             });
         }
@@ -172,8 +172,8 @@ class SppdController extends Controller
                         'draft',
                         'submitted',
                         'rejected',
-                    ]);
-
+                    ])
+                    ->where('requester_id', $user->id);
                     break;
 
                 case 'realisasi':
@@ -406,7 +406,7 @@ class SppdController extends Controller
         if (
             !$user->hasPermission('sppd.view.all')
             &&
-            $data->requester?->division_id != $user->division_id
+            $data->requester?->department_id != $user->department_id
         ) {
 
             return response()->json([
@@ -1210,15 +1210,16 @@ class SppdController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            if (
-                !$user->hasPermission('sppd.update.all')
+           if (
+                !$user->hasPermission('sppd.view.all')
                 &&
-                $sppd->requester?->division_id != $user->division_id
-            ) {
+                $sppd->requester_id != $user->id
+            ) 
+            {
 
                 return response()->json([
                     'status' => false,
-                    'message' => 'Anda tidak memiliki akses division'
+                    'message' => 'Anda tidak memiliki akses department'
                 ], 403);
             }
 
@@ -1430,14 +1431,13 @@ class SppdController extends Controller
         */
 
         if (
-            !$user->hasPermission('sppd.delete.all')
+            !$user->hasPermission('sppd.view.all')
             &&
-            $sppd->requester?->division_id != $user->division_id
-        ) {
-
+            $sppd->requester_id != $user->id
+        ){
             return response()->json([
                 'status' => false,
-                'message' => 'Anda tidak memiliki akses division'
+                'message' => 'Anda tidak memiliki akses ke sppd ini'
             ], 403);
         }
 
