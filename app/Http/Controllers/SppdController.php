@@ -194,7 +194,8 @@ class SppdController extends Controller
 
                 case 'report':
 
-                    $query->where(function ($q) {
+                $query->where('approval_status', 'approved')
+                    ->where(function ($q) {
 
                         $q->whereHas('peserta.transportasi', function ($t) {
                             $t->whereNotNull('actual_biaya');
@@ -205,7 +206,7 @@ class SppdController extends Controller
 
                     });
 
-                    break;
+                break;
 
                 case 'history':
 
