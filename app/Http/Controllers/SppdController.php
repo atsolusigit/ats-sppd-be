@@ -178,7 +178,17 @@ class SppdController extends Controller
 
                 case 'realisasi':
 
-                    $query->where('approval_status', 'approved');
+                    $query->where('approval_status', 'approved')
+
+                        ->where(function ($q) {
+                            $q->whereHas('peserta.transportasi', function ($t) {
+                                $t->whereNull('actual_biaya');
+                            })
+
+                            ->orWhereHas('peserta.penginapan', function ($p) {
+                                $p->whereNull('actual_biaya');
+                            });
+                        });
 
                     break;
 
