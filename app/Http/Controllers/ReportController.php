@@ -79,6 +79,22 @@ class ReportController extends Controller
     )]
     public function store(Request $request, $sppdId)
     {
+        $sppd = TrSppd::findOrFail($sppdId);
+
+        $transportEmpty = TrSppdTransportasi::where('sppd_id', $sppd->id)
+            ->whereNull('actual_biaya')
+            ->exists();
+
+        $accommodationEmpty = TrSppdPenginapan::where('sppd_id', $sppd->id)
+            ->whereNull('actual_biaya')
+            ->exists();
+
+        if ($transportEmpty || $accommodationEmpty) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Realisasi belum lengkap. Pastikan semua biaya transportasi dan akomodasi sudah diisi.'
+            ], 422);
+        }
         $request->validate([
             'tujuan_perjalanan' => 'required|string',
             'ringkasan_hasil_kegiatan' => 'required|string',
@@ -89,8 +105,6 @@ class ReportController extends Controller
         DB::beginTransaction();
 
         try {
-
-            $sppd = TrSppd::findOrFail($sppdId);
 
             $report = TrReport::updateOrCreate(
                 [
