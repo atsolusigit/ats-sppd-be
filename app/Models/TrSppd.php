@@ -105,6 +105,16 @@ class TrSppd extends Model
         );
     }
 
+    public function report()
+    {
+        return $this->hasOne(
+            TrReport::class,
+            'sppd_id'
+        );
+    }
+
+
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

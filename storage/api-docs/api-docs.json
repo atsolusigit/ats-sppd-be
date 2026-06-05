@@ -2133,6 +2133,10 @@
                                         "type": "integer",
                                         "example": 1
                                     },
+                                    "approval_flow_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "tujuan_perjalanan": {
                                         "type": "string",
                                         "example": "Jakarta"
@@ -2227,6 +2231,110 @@
                     },
                     "404": {
                         "description": "Report tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/{sppdId}/submit": {
+            "post": {
+                "tags": [
+                    "SPPD Report"
+                ],
+                "summary": "Submit Report untuk Approval",
+                "operationId": "7af4e3971b2335d42139ba5dd44fdbad",
+                "parameters": [
+                    {
+                        "name": "sppdId",
+                        "in": "path",
+                        "description": "ID SPPD",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Report submitted successfully"
+                    },
+                    "400": {
+                        "description": "Report bukan draft"
+                    },
+                    "404": {
+                        "description": "Report tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reports/{reportId}/action": {
+            "post": {
+                "tags": [
+                    "SPPD Report"
+                ],
+                "summary": "Approve / Reject / Revision Report",
+                "operationId": "ee27a62fc8569886337d679cade71cb7",
+                "parameters": [
+                    {
+                        "name": "reportId",
+                        "in": "path",
+                        "description": "ID Report",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": "approved",
+                                        "enum": [
+                                            "approved",
+                                            "rejected",
+                                            "revision"
+                                        ]
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Report sudah sesuai",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Approval report berhasil diproses"
+                    },
+                    "403": {
+                        "description": "Tidak memiliki hak approval"
+                    },
+                    "404": {
+                        "description": "Approval level tidak ditemukan"
+                    },
+                    "500": {
+                        "description": "Terjadi kesalahan sistem"
                     }
                 },
                 "security": [

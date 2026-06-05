@@ -145,7 +145,8 @@ class SppdController extends Controller
             'approval_flow',
             'approvals',
             'peserta.transportasi',
-            'peserta.penginapan'
+            'peserta.penginapan',
+            'report.approvals'
         ]);
 
         /*
@@ -324,6 +325,23 @@ class SppdController extends Controller
                     ];
                 }),
 
+                'report' => $item->report ? [
+
+                    'id' => $item->report->id,
+                    'approval_flow_id' => $item->report->approval_flow_id,
+                    'status' => $item->report->status,
+                    'current_approval_level' => $item->report->current_approval_level,
+
+                    'tujuan_perjalanan' => $item->report->tujuan_perjalanan,
+                    'ringkasan_hasil_kegiatan' => $item->report->ringkasan_hasil_kegiatan,
+
+                    'lampiran' => $item->report->lampiran,
+
+                    'submitted_at' => $item->report->submitted_at,
+                    'approved_at' => $item->report->approved_at,
+
+                ] : null,
+
                 'peserta' => $item->peserta->map(function ($p) {
 
                     return [
@@ -405,7 +423,9 @@ class SppdController extends Controller
             'requester',
             'approval_flow',
             'peserta.transportasi',
-            'peserta.penginapan'
+            'peserta.penginapan',
+            'approvals',
+            'report.approvals'
         ])->findOrFail($id);
 
         /*
@@ -453,6 +473,23 @@ class SppdController extends Controller
                         $data->requester->name,
                         $data->requester->id
                     ),
+                ] : null,
+
+                'report' => $data->report ? [
+
+                    'id' => $data->report->id,
+                    'approval_flow_id' => $data->report->approval_flow_id,
+                    'status' => $data->report->status,
+                    'current_approval_level' => $data->report->current_approval_level,
+
+                    'tujuan_perjalanan' => $data->report->tujuan_perjalanan,
+                    'ringkasan_hasil_kegiatan' => $data->report->ringkasan_hasil_kegiatan,
+
+                    'lampiran' => $data->report->lampiran,
+
+                    'submitted_at' => $data->report->submitted_at,
+                    'approved_at' => $data->report->approved_at,
+
                 ] : null,
 
                 'peserta' => $data->peserta->map(function ($p) {

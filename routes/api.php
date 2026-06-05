@@ -294,6 +294,12 @@ Route::middleware(['auth:api'])->group(function () {
         
     Route::delete('/reports/{id}', [ReportController::class, 'destroy'])
         ->middleware('permission:report.delete');
+    
+    Route::patch('/reports/{id}/submit',[ReportController::class, 'submit'])
+    ;
+
+    Route::post('/reports/{id}/approval', [ReportController::class, 'action'])
+    ;
 
 });
 
