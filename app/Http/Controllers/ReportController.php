@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
+use App\Models\TrSppdTransportasi;
+use App\Models\TrSppdPenginapan;
 
 class ReportController extends Controller
 {
@@ -77,17 +79,23 @@ class ReportController extends Controller
             )
         ]
     )]
-    public function store(Request $request, $sppdId)
+    public function store(Request $request)
     {
+        $sppdId = $request->sppd_id;
+
         $sppd = TrSppd::findOrFail($sppdId);
 
-        $transportEmpty = TrSppdTransportasi::where('sppd_id', $sppd->id)
-            ->whereNull('actual_biaya')
-            ->exists();
+        $transportEmpty = TrSppdTransportasi::whereHas('peserta', function ($q) use ($sppd) {
+            $q->where('sppd_id', $sppd->id);
+        })
+        ->whereNull('actual_biaya')
+        ->exists();
 
-        $accommodationEmpty = TrSppdPenginapan::where('sppd_id', $sppd->id)
-            ->whereNull('actual_biaya')
-            ->exists();
+        $accommodationEmpty = TrSppdPenginapan::whereHas('peserta', function ($q) use ($sppd) {
+            $q->where('sppd_id', $sppd->id);
+        })
+        ->whereNull('actual_biaya')
+        ->exists();
 
         if ($transportEmpty || $accommodationEmpty) {
             return response()->json([
