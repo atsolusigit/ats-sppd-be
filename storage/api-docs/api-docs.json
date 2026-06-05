@@ -3425,13 +3425,13 @@
                 ]
             }
         },
-        "/api/sppd/realisasi": {
+        "/api/sppd/realisasi/update": {
             "put": {
                 "tags": [
                     "SPPD Realisasi"
                 ],
                 "summary": "Update realisasi biaya SPPD",
-                "operationId": "0142fee03cb2279f2bf7d0fc6d25323a",
+                "operationId": "011aa6a5f32eefd4609d49339d98e644",
                 "requestBody": {
                     "required": true,
                     "content": {

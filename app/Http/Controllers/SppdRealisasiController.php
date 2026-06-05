@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\TdSppdTransportation;
-use App\Models\TdSppdAccommodation;
+use App\Models\TrSppdTransportasi;
+use App\Models\TrSppdPenginapan;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
+use App\Models\TrSppd;
 
 class SppdRealisasiController extends Controller
 {
     
     #[OA\Put(
-        path: "/api/sppd/realisasi",
+        path: "/api/sppd/realisasi/update",
         summary: "Update realisasi biaya SPPD",
         tags: ["SPPD Realisasi"],
         security: [["bearerAuth" => []]],
@@ -144,63 +145,79 @@ class SppdRealisasiController extends Controller
             )
         ]
     )]
-    public function update(Request $request)
-    {
-        $validated = $request->validate([
+        public function update(Request $request)
+        {
+            $sppd = TrSppd::where('id', $request->sppd_id)->first();
 
-            'transportations' => 'array',
-
-            'transportations.*.id' => 'required|exists:td_sppd_transportations,id',
-            'transportations.*.actual_biaya' => 'required|numeric|min:0',
-            'transportations.*.keterangan_realisasi' => 'nullable|string',
-            'transportations.*.lampiran' => 'nullable|array',
-
-            'accommodations' => 'array',
-
-            'accommodations.*.id' => 'required|exists:td_sppd_accommodations,id',
-            'accommodations.*.actual_biaya' => 'required|numeric|min:0',
-            'accommodations.*.keterangan_realisasi' => 'nullable|string',
-            'accommodations.*.lampiran' => 'nullable|array',
-        ]);
-
-        DB::beginTransaction();
-
-        try {
-
-            foreach ($validated['transportations'] ?? [] as $transport) {
-
-                TdSppdTransportation::where('id', $transport['id'])
-                    ->update([
-                        'actual_biaya' => $transport['actual_biaya'],
-                        'keterangan_realisasi' => $transport['keterangan_realisasi'] ?? null,
-                        'lampiran' => $transport['lampiran'] ?? null,
-                    ]);
+            if (!$sppd) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'SPPD tidak ditemukan'
+                ], 404);
             }
 
-            foreach ($validated['accommodations'] ?? [] as $accommodation) {
-
-                TdSppdAccommodation::where('id', $accommodation['id'])
-                    ->update([
-                        'actual_biaya' => $accommodation['actual_biaya'],
-                        'keterangan_realisasi' => $accommodation['keterangan_realisasi'] ?? null,
-                        'lampiran' => $accommodation['lampiran'] ?? null,
-                    ]);
+            if ($sppd->approval_status !== 'approved') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'SPPD belum approved, tidak bisa input realisasi'
+                ], 403);
             }
+            
+            $validated = $request->validate([
 
-            DB::commit();
+                'transportations' => 'array',
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Realisasi berhasil disimpan'
+                'transportations.*.id' => 'required|exists:td_sppd_transportations,id',
+                'transportations.*.actual_biaya' => 'required|numeric|min:0',
+                'transportations.*.keterangan_realisasi' => 'nullable|string',
+                'transportations.*.lampiran' => 'nullable|array',
+
+                'accommodations' => 'array',
+
+                'accommodations.*.id' => 'required|exists:td_sppd_accommodations,id',
+                'accommodations.*.actual_biaya' => 'required|numeric|min:0',
+                'accommodations.*.keterangan_realisasi' => 'nullable|string',
+                'accommodations.*.lampiran' => 'nullable|array',
             ]);
-        } catch (\Exception $e) {
 
-            DB::rollBack();
+            DB::beginTransaction();
 
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
+            try {
+
+                foreach ($validated['transportations'] ?? [] as $transport) {
+
+                    TrSppdTransportasi::where('id', $transport['id'])
+                        ->update([
+                            'actual_biaya' => $transport['actual_biaya'],
+                            'keterangan_realisasi' => $transport['keterangan_realisasi'] ?? null,
+                            'lampiran' => $transport['lampiran'] ?? null,
+                        ]);
+                }
+
+                foreach ($validated['accommodations'] ?? [] as $accommodation) {
+
+                    TrSppdPenginapan::where('id', $accommodation['id'])
+                        ->update([
+                            'actual_biaya' => $accommodation['actual_biaya'],
+                            'keterangan_realisasi' => $accommodation['keterangan_realisasi'] ?? null,
+                            'lampiran' => $accommodation['lampiran'] ?? null,
+                        ]);
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Realisasi berhasil disimpan'
+                ]);
+            } catch (\Exception $e) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
         }
-    }
 }
