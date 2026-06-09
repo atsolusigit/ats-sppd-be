@@ -218,6 +218,8 @@ class ApprovalHelper
 
                 'approval_level' => $flow->approval_order,
 
+                'approval_key' => $flow->approval_key,
+
                 'approver_id' => $approverId,
 
                 'approver_jabatan_id' => $approverJabatanId,
@@ -451,6 +453,8 @@ class ApprovalHelper
                 'report_id' => $reportId,
 
                 'approval_level' => $flow->approval_order,
+
+                'approval_key' => $flow->approval_key,
 
                 'approver_id' => $approverId,
 

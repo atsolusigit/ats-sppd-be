@@ -2616,6 +2616,33 @@
                         }
                     },
                     {
+                        "name": "approval_level",
+                        "in": "query",
+                        "description": "Filter approval level (untuk melihat SPPD yang butuh approval di level tertentu)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "approver_jabatan_id",
+                        "in": "query",
+                        "description": "Filter jabatan approver (untuk melihat SPPD yang butuh approval oleh jabatan tertentu)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "approval_key",
+                        "in": "query",
+                        "description": "Filter approval key (director / direct_manager / finance / human_resource)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "department_id",
                         "in": "query",
                         "description": "Filter department",

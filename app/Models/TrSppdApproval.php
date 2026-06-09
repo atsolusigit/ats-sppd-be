@@ -11,6 +11,7 @@ class TrSppdApproval extends Model
     protected $fillable = [
         'sppd_id',
         'approval_level',
+        'approval_key',
         'approver_id',
         'approver_jabatan_id',
         'status',

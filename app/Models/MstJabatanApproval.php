@@ -14,6 +14,7 @@ class MstJabatanApproval extends Model
 
         'approval_mode',
         'target_level',
+        'approval_key',
 
         'target_jabatan_id',
         'target_department_id',

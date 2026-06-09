@@ -590,6 +590,36 @@ class SppdApprovalController extends Controller
             ),
 
             new OA\Parameter(
+                name: "approval_level",
+                in: "query",
+                required: false,
+                description: "Filter approval level (untuk melihat SPPD yang butuh approval di level tertentu)",
+                schema: new OA\Schema(
+                    type: "integer",
+                )
+            ),
+
+            new OA\Parameter(
+                name: "approver_jabatan_id",
+                in: "query",
+                required: false,
+                description: "Filter jabatan approver (untuk melihat SPPD yang butuh approval oleh jabatan tertentu)",
+                schema: new OA\Schema(
+                    type: "integer",
+                )
+            ),
+
+            new OA\Parameter(
+                name: "approval_key",
+                in: "query",
+                required: false,
+                description: "Filter approval key (director / direct_manager / finance / human_resource)",
+                schema: new OA\Schema(
+                    type: "string",
+                )
+            ),
+
+            new OA\Parameter(
                 name: "department_id",
                 in: "query",
                 required: false,
@@ -857,6 +887,245 @@ class SppdApprovalController extends Controller
             ),
         ]
     )]
+    // public function list(Request $request)
+    // {
+    //     $user = auth()->user();
+
+    //     $hasSuperAccess = $user->hasPermission('super.access');
+
+    //     $query = TrSppd::with([
+    //         'requester',
+    //         'approval_flow',
+    //         'approvals.approver',
+    //         'approvals.approverJabatan'
+    //     ]);
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | HIDE DRAFT
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     $query->where('approval_status', '!=', 'draft');
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | ACCESS FILTER
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     if (!$hasSuperAccess) {
+
+    //         $query->whereHas('approvals', function ($q) use ($user) {
+
+    //             $q->where('approver_jabatan_id', $user->jabatan_id)
+    //                 ->whereRaw(
+    //                     'approval_level <= tr_sppd.current_approval_level + 1'
+    //                 );
+    //         });
+    //     }
+
+    //     $query = $this->applyFilters(
+    //         query: $query,
+    //         request: $request,
+
+    //         allowedFilters: [
+    //             'approval_status',
+    //             'approval_flow_id',
+    //             'current_approval_level',
+    //             'department_id',
+    //             'requester_id',
+    //         ],
+
+    //         searchableFields: [
+    //             'sppd_number',
+    //             'cost_center',
+    //             'kegiatan',
+    //             'ringkasan_agenda',
+    //         ]
+    //     );
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | SORTING
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     // $query->latest('id')
+    //     $query->reorder();
+    //     $query->orderByRaw("
+    //         FIELD(
+    //             approval_status,
+    //             'draft',
+    //             'submitted',
+    //             'approved',
+    //             'rejected',
+    //             'revision',
+    //             'completed',
+    //             'cancelled'
+    //         )
+    //     ")->latest('id');
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | PAGINATION
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     $approvalLevelFilter = $request->get('approval_level');
+    //     if (!empty($approvalLevelFilter)) {
+
+    //     $query->where(
+    //         'current_approval_level',
+    //         '>=',
+    //         ((int)$approvalLevelFilter - 1)
+    //     );
+
+    //     if (!empty($approvalLevelFilter)) {
+
+    //         $query->whereHas('approvals', function ($q) use ($approvalLevelFilter) {
+    //             $q->where('approval_level', $approvalLevelFilter);
+    //         });
+
+    //         $query->where(
+    //             'current_approval_level',
+    //             '>=',
+    //             ((int)$approvalLevelFilter - 1)
+    //         );
+    //     }
+    //     }
+    //     $paginated = $query->paginate(
+    //         $request->get('per_page', 10)
+    //     );
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | FORMAT RESPONSE
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     $collection = $paginated->getCollection()->map(
+    //         function ($item) use ($user, $hasSuperAccess, $approvalLevelFilter) {
+
+    //             $approvals = $item->approvals
+    //                 ->filter(function ($approval) use (
+    //                     $user,
+    //                     $hasSuperAccess,
+    //                     $approvalLevelFilter,
+    //                 ) {
+
+    //                     // filter approval level
+    //                     if (!empty($approvalLevelFilter)) {
+
+    //                         if (
+    //                             $approval->approval_level !=
+    //                             (int) $approvalLevelFilter
+    //                         ) {
+    //                             return false;
+    //                         }
+    //                     }
+
+    //                     // super access lihat semua
+    //                     if ($hasSuperAccess) {
+    //                         return true;
+    //                     }
+
+    //                     // user biasa hanya lihat approval sesuai jabatannya
+    //                     return $approval->approver_jabatan_id == $user->jabatan_id;
+    //                 })
+    //                 ->sortBy('approval_level')
+    //                 ->values();
+    //             return [
+
+    //                 'id' => $item->id,
+
+    //                 'sppd_number' => $item->sppd_number,
+
+    //                 'jenis_dokumen' => $item->jenis_dokumen,
+
+    //                 'cost_center' => $item->cost_center,
+
+    //                 'kegiatan' => $item->kegiatan,
+
+    //                 'ringkasan_agenda' => $item->ringkasan_agenda,
+
+    //                 'approval_status' => $item->approval_status,
+
+    //                 'current_approval_level' => $item->current_approval_level,
+
+    //                 'grand_total' => $item->grand_total,
+
+    //                 'created_at' => $item->created_at,
+
+    //                 'updated_at' => $item->updated_at,
+
+    //                 'requester' => $item->requester ? [
+
+    //                     'id' => $item->requester->id,
+
+    //                     'name' => encrypt_decrypt_db(
+    //                         'dec',
+    //                         $item->requester->name,
+    //                         $item->requester->id
+    //                     ),
+
+    //                 ] : null,
+
+    //                 'approval_flow' => $item->approval_flow ? [
+
+    //                     'id' => $item->approval_flow->id,
+
+    //                     'name' => $item->approval_flow->name,
+
+    //                 ] : null,
+
+    //                 'approvals' => $approvals->map(function ($approval) {
+
+    //                     return [
+
+    //                         'id' => $approval->id,
+
+    //                         'approval_level' => $approval->approval_level,
+
+    //                         'approver_id' => $approval->approver_id,
+
+    //                         'approver_name' => $approval->approver
+    //                             ? encrypt_decrypt_db(
+    //                                 'dec',
+    //                                 $approval->approver->name,
+    //                                 $approval->approver->id
+    //                             )
+    //                             : null,
+
+    //                         'approver_jabatan_id' => $approval->approver_jabatan_id,
+
+    //                         'approver_jabatan_name' => $approval->approverJabatan?->name,
+
+    //                         'status' => $approval->status,
+
+    //                         'notes' => $approval->notes,
+
+    //                         'approved_at' => $approval->approved_at,
+    //                     ];
+    //                 }),
+    //             ];
+    //         }
+    //     );
+
+    //     return response()->json([
+
+    //         'status' => true,
+
+    //         'pagination' => [
+
+    //             'current_page' => $paginated->currentPage(),
+
+    //             'last_page' => $paginated->lastPage(),
+
+    //             'per_page' => $paginated->perPage(),
+
+    //             'total' => $paginated->total(),
+    //         ],
+
+    //         'data' => $collection,
+    //     ]);
+    // }
+
     public function list(Request $request)
     {
         $user = auth()->user();
@@ -917,7 +1186,21 @@ class SppdApprovalController extends Controller
         | SORTING
         |--------------------------------------------------------------------------
         */
-        $query->latest('id');
+        // $query->latest('id')
+        $query->reorder();
+        $query->orderByRaw("
+            FIELD(
+                approval_status,
+                'draft',
+                'submitted',
+                'approved',
+                'rejected',
+                'revision',
+                'completed',
+                'cancelled'
+            )
+        ")->latest('id');
+
 
         /*
         |--------------------------------------------------------------------------
@@ -932,7 +1215,42 @@ class SppdApprovalController extends Controller
             '>=',
             ((int)$approvalLevelFilter - 1)
         );
-}
+
+        if (!empty($approvalLevelFilter)) {
+
+            $query->whereHas('approvals', function ($q) use ($approvalLevelFilter) {
+                $q->where('approval_level', $approvalLevelFilter);
+            });
+
+            $query->where(
+                'current_approval_level',
+                '>=',
+                ((int)$approvalLevelFilter - 1)
+            );
+        }
+        }
+
+        $approvalKey = $request->get('approval_key');
+        $approverJabatanId = $request->get('approver_jabatan_id');
+
+        if (!empty($approvalKey)) {
+
+            $query->whereHas('approvals', function ($q) use ($approvalKey) {
+
+                $q->where('approval_key', $approvalKey);
+            });
+        }
+
+        if (!empty($approverJabatanId)) {
+
+            $query->whereHas('approvals', function ($q) use ($approverJabatanId) {
+
+                $q->where(
+                    'approver_jabatan_id',
+                    (int) $approverJabatanId
+                );
+            });
+        }
         $paginated = $query->paginate(
             $request->get('per_page', 10)
         );
@@ -943,13 +1261,16 @@ class SppdApprovalController extends Controller
         |--------------------------------------------------------------------------
         */
         $collection = $paginated->getCollection()->map(
-            function ($item) use ($user, $hasSuperAccess, $approvalLevelFilter) {
+            function ($item) use ($user, $hasSuperAccess, $approvalLevelFilter, $approvalKey, $approverJabatanId) {
 
                 $approvals = $item->approvals
                     ->filter(function ($approval) use (
                         $user,
                         $hasSuperAccess,
                         $approvalLevelFilter,
+                        $approvalKey,
+                        $approverJabatanId,
+
                     ) {
 
                         // filter approval level
@@ -961,6 +1282,32 @@ class SppdApprovalController extends Controller
                             ) {
                                 return false;
                             }
+                        }
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | FILTER APPROVAL KEY
+                        |--------------------------------------------------------------------------
+                        */
+                        if (
+                            !empty($approvalKey)
+                            &&
+                            $approval->approval_key !== $approvalKey
+                        ) {
+                            return false;
+                        }
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | FILTER JABATAN
+                        |--------------------------------------------------------------------------
+                        */
+                        if (
+                            !empty($approverJabatanId)
+                            &&
+                            $approval->approver_jabatan_id != (int)$approverJabatanId
+                        ) {
+                            return false;
                         }
 
                         // super access lihat semua
@@ -1024,6 +1371,8 @@ class SppdApprovalController extends Controller
                             'id' => $approval->id,
 
                             'approval_level' => $approval->approval_level,
+
+                            'approval_key' => $approval->approval_key,
 
                             'approver_id' => $approval->approver_id,
 
