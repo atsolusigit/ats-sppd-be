@@ -415,16 +415,16 @@ class UserController extends Controller
             'jabatan_id' => 'sometimes|integer',
         ]);
 
-        if ($request->has('name')) {
-            $user->name = encrypt_decrypt_db('enc', $request->name);
-        }
+        $encryptFields = ['name', 'email', 'username'];
 
-        if ($request->has('email')) {
-            $user->email = encrypt_decrypt_db('enc', $request->email);
-        }
-
-        if ($request->has('username')) {
-            $user->username = encrypt_decrypt_db('enc', $request->username);
+        foreach ($encryptFields as $field) {
+            if ($request->filled($field)) {
+                $user->{$field} = encrypt_decrypt_db(
+                    'enc',
+                    $request->{$field},
+                    $user->id
+                );
+            }
         }
 
         if ($request->has('password')) {

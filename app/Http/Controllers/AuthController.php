@@ -280,6 +280,7 @@ class AuthController extends Controller
              // ambil model
             $user = User::with([
                     'role.permissions',
+                    'role.pages',
                     'department',
                     'jabatan'
                 ])
@@ -312,6 +313,10 @@ class AuthController extends Controller
             $decryptedPhone = $user->phone_number ? encrypt_decrypt_db('dec', $user->phone_number, $user->id) : null;
 
             $permissions = $user->role?->permissions?->pluck('slug');
+            $pages = $user->role?->pages?->pluck('slug');
+            if ($permissions && $permissions->contains('super.access')) {
+            $approvalKeys = collect(['super.access']);
+            } else {
             $sppdKeys = DB::table('tr_sppd_approvals')
                 ->where('approver_jabatan_id', $user->jabatan_id)
                 ->pluck('approval_key');
@@ -325,7 +330,7 @@ class AuthController extends Controller
                 ->filter()
                 ->unique()
                 ->values();
-
+            }
             return json(200, 'true', 'Login Berhasil', 'Selamat datang!', [
                 'user' => [
                     'id' => $user->id,
@@ -357,6 +362,7 @@ class AuthController extends Controller
                         'updated_at' => $user->role->updated_at,
                     ] : null,
                     'permissions' => $permissions,
+                    'pages' => $pages,
                     'approval_keys' => $approvalKeys,
                 ],
                 'access_token' => [

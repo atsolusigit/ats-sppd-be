@@ -432,4 +432,136 @@ class MstRoleController extends Controller
             ]
         ]);
     }
+
+    #[OA\Post(
+        path: "/api/roles/{id}/pages",
+        tags: ["Roles"],
+        summary: "Assign pages to role",
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                required: true,
+                description: "Role ID",
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["pages"],
+                properties: [
+                    new OA\Property(
+                        property: "pages",
+                        type: "array",
+                        items: new OA\Items(
+                            properties: [
+                                new OA\Property(
+                                    property: "page_id",
+                                    type: "integer",
+                                    example: 1
+                                ),
+                                new OA\Property(
+                                    property: "access",
+                                    type: "boolean",
+                                    example: true
+                                )
+                            ],
+                            type: "object"
+                        )
+                    )
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Pages assigned successfully"
+            )
+        ]
+    )]
+    public function assignPages(Request $request, $id)
+    {
+        $role = MstRole::find($id);
+
+        if (!$role) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Role not found'
+            ], 404);
+        }
+
+        $request->validate([
+            'pages' => 'required|array',
+            'pages.*.page_id' => 'required|exists:mst_page,id',
+            'pages.*.access' => 'required|boolean',
+        ]);
+
+        $syncData = [];
+
+        foreach ($request->pages as $page) {
+            $syncData[$page['page_id']] = [
+                'access' => $page['access']
+            ];
+        }
+
+        $role->pages()->sync($syncData);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pages assigned successfully'
+        ]);
+    }
+
+    #[OA\Get(
+        path: "/api/roles/{id}/pages",
+        tags: ["Roles"],
+        summary: "Get pages by role",
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                required: true,
+                schema: new OA\Schema(type: "integer")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Pages fetched successfully"
+            )
+        ]
+    )]
+    public function getPages($id)
+    {
+        $role = MstRole::with('pages')->find($id);
+
+        if (!$role) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Role not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pages fetched successfully',
+            'data' => [
+                'role' => [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                ],
+                'pages' => $role->pages->map(function ($page) {
+                    return [
+                        'id' => $page->id,
+                        'name' => $page->name,
+                        'head_url' => $page->head_url,
+                        'access' => $page->pivot->access,
+                    ];
+                })
+            ]
+        ]);
+    }
 }

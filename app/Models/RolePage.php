@@ -8,17 +8,20 @@ class RolePage extends Model
 {
     protected $table = 'tr_role_page';
 
-    protected $fillable = ['name', 'created_by','access','role_id', 'page_id', 'created_at', 'updated_at'];
+    protected $fillable = [
+        'role_id',
+        'page_id',
+        'access',
+        'created_by',
+    ];
 
-    public function pages()
+    public function role()
     {
-        return $this->belongsToMany(MstPage::class, 'tr_role_page', 'role_id', 'page_id');
+        return $this->belongsTo(MstRole::class, 'role_id');
     }
-    public function roles()
-{
-    return $this->belongsToMany(MstRole::class, 'tr_role_page', 'page_id', 'role_id')
-                ->withPivot('access')
-                ->withTimestamps();
-}
 
+    public function page()
+    {
+        return $this->belongsTo(MstPage::class, 'page_id');
+    }
 }

@@ -127,6 +127,14 @@ Route::middleware(['auth:api'])->group(function () {
     // GET ROLE PERMISSIONS
     Route::get('/roles/{id}/permissions', [MstRoleController::class, 'getPermissions'])
         ->middleware('permission:role.view');
+
+    // ASSIGN ROLE PAGES
+    Route::post('/roles/{id}/pages', [MstRoleController::class, 'assignPages'])
+    ->middleware('permission:role.assign_page');
+
+    // GET ROLE PAGES
+    Route::get('/roles/{id}/pages', [MstRoleController::class, 'getPages'])
+        ->middleware('permission:role.view');
 });
 
 Route::middleware(['auth:api'])->group(function () {
@@ -296,9 +304,11 @@ Route::middleware(['auth:api'])->group(function () {
         ->middleware('permission:report.delete');
     
     Route::patch('/reports/{id}/submit',[ReportController::class, 'submit'])
+        ->middleware('permission:report.create')
     ;
 
     Route::post('/reports/{id}/approval', [ReportController::class, 'action'])
+        ->middleware('permission:report.approval')  
     ;
 
 });
@@ -316,4 +326,40 @@ Route::middleware(['auth:api'])->group(function () {
     
     Route::post('/reports/{id}/approval', [TrReportApprovalController::class, 'action'])
         ->middleware('permission:report.approval');
+});
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::get('/pages', [PageController::class, 'index'])
+        ->middleware('permission:page.view');
+
+    Route::get('/pages/{id}', [PageController::class, 'show'])
+        ->middleware('permission:page.view');
+
+    Route::post('/pages', [PageController::class, 'store'])
+        ->middleware('permission:page.create');
+
+    Route::put('/pages/{id}', [PageController::class, 'update'])
+        ->middleware('permission:page.update');
+
+    Route::delete('/pages/{id}', [PageController::class, 'destroy'])
+        ->middleware('permission:page.delete');
+});
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::get('/role-pages', [RolePageController::class, 'index'])
+        ->middleware('permission:role_page.view');
+
+    Route::get('/role-pages/{id}', [RolePageController::class, 'show'])
+        ->middleware('permission:role_page.view');
+
+    Route::post('/role-pages', [RolePageController::class, 'store'])
+        ->middleware('permission:role_page.create');
+
+    Route::put('/role-pages/{id}', [RolePageController::class, 'update'])
+        ->middleware('permission:role_page.update');
+
+    Route::delete('/role-pages/{id}', [RolePageController::class, 'destroy'])
+        ->middleware('permission:role_page.delete');
 });
