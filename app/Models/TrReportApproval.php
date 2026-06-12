@@ -11,6 +11,7 @@ class TrReportApproval extends Model
     protected $fillable = [
         'report_id',
         'approval_level',
+        'approval_key',
         'approver_id',
         'approver_jabatan_id',
         'status',
@@ -35,6 +36,14 @@ class TrReportApproval extends Model
         return $this->belongsTo(
             User::class,
             'approver_id'
+        );
+    }
+
+    public function approverJabatan()
+    {
+        return $this->belongsTo(
+            MstJabatan::class,
+            'approver_jabatan_id'
         );
     }
 }

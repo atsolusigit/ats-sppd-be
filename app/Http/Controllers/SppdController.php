@@ -7,11 +7,14 @@ use App\Models\TrSppd;
 use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 use App\Traits\HasDynamicFilter;
-use App\Helpers\ApprovalHelper;
+use App\Services\ApprovalService;
 
 class SppdController extends Controller
 {
     use HasDynamicFilter;
+    public function __construct(
+        private ApprovalService $approvalService
+    ) {}
     /**
      * LIST SPPD
      */
@@ -1643,7 +1646,12 @@ class SppdController extends Controller
             |----------------------------------------
             */
 
-            $created = ApprovalHelper::createApprovalSteps(
+            // $created = ApprovalHelper::createApprovalSteps(
+            //     sppdId: $sppd->id,
+            //     flowId: $sppd->approval_flow_id
+            // );
+
+            $created = $this->approvalService->createApprovalSteps(
                 sppdId: $sppd->id,
                 flowId: $sppd->approval_flow_id
             );

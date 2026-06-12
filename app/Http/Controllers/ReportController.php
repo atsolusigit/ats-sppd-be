@@ -11,12 +11,15 @@ use OpenApi\Attributes as OA;
 use App\Models\TrSppdTransportasi;
 use App\Models\TrSppdPenginapan;
 use App\Models\TrReportApproval;
-use App\Helpers\ApprovalHelper;
+use App\Services\ApprovalService;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
 
 class ReportController extends Controller
 {
+    public function __construct(
+        private ApprovalService $approvalService
+    ) {}
     /**
      * Create / Update Report
      */
@@ -358,7 +361,7 @@ class ReportController extends Controller
         ]);
     }
 
-    #[OA\Post(
+    #[OA\Patch(
         path: "/api/reports/{sppdId}/submit",
         tags: ["SPPD Report"],
         summary: "Submit Report untuk Approval",
@@ -416,7 +419,12 @@ class ReportController extends Controller
                 'current_approval_level' => 0,
             ]);
 
-            ApprovalHelper::createApprovalStepsReport(
+            // ApprovalHelper::createApprovalStepsReport(
+            //     reportId: $report->id,
+            //     flowId: $report->approval_flow_id
+            // );
+
+            $this->approvalService->createApprovalStepsReport(
                 reportId: $report->id,
                 flowId: $report->approval_flow_id
             );
@@ -701,5 +709,218 @@ class ReportController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function list(Request $request)
+    {
+        $user = auth()->user();
+
+        $hasSuperAccess = $user->hasPermission('super.access');
+
+        $query = TrReport::with([
+            'sppd',
+            'approvals.approver',
+            'approvals.approverJabatan'
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | ACCESS FILTER
+        |--------------------------------------------------------------------------
+        */
+        if (!$hasSuperAccess) {
+
+            $query->whereHas('approvals', function ($q) use ($user) {
+
+                $q->where(
+                    'approver_jabatan_id',
+                    $user->jabatan_id
+                );
+            });
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEARCH
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('tujuan_perjalanan', 'like', "%{$search}%")
+                    ->orWhere(
+                        'ringkasan_hasil_kegiatan',
+                        'like',
+                        "%{$search}%"
+                    );
+            });
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER STATUS REPORT
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('status')) {
+
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER APPROVAL KEY
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('approval_key')) {
+
+            $approvalKey = $request->approval_key;
+
+            $query->whereHas('approvals', function ($q) use ($approvalKey) {
+
+                $q->where(
+                    'approval_key',
+                    $approvalKey
+                );
+            });
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER JABATAN APPROVER
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('approver_jabatan_id')) {
+
+            $jabatanId = $request->approver_jabatan_id;
+
+            $query->whereHas('approvals', function ($q) use ($jabatanId) {
+
+                $q->where(
+                    'approver_jabatan_id',
+                    $jabatanId
+                );
+            });
+        }
+
+        $query->latest('id');
+
+        $paginated = $query->paginate(
+            $request->get('per_page', 10)
+        );
+
+        $collection = $paginated->getCollection()->map(
+            function ($item) use (
+                $user,
+                $hasSuperAccess,
+            ) {
+
+                $approvals = $item->approvals
+                    ->filter(function ($approval) use (
+                        $user,
+                        $hasSuperAccess,
+                    ) {
+
+                        if ($hasSuperAccess) {
+                            return true;
+                        }
+
+                        return
+                            $approval->approver_jabatan_id ==
+                            $user->jabatan_id;
+                    })
+                    ->values();
+
+                return [
+
+                    'id' => $item->id,
+
+                    'sppd_id' => $item->sppd_id,
+
+                    'approval_flow_id' => $item->approval_flow_id,
+
+                    'status' => $item->status,
+
+                    'tujuan_perjalanan' => $item->tujuan_perjalanan,
+
+                    'ringkasan_hasil_kegiatan' =>
+                        $item->ringkasan_hasil_kegiatan,
+
+                    'submitted_at' => $item->submitted_at,
+
+                    'approved_at' => $item->approved_at,
+
+                    'approvals' => $approvals->map(
+                        function ($approval) {
+
+                            return [
+
+                                'id' => $approval->id,
+
+                                'approval_level' =>
+                                    $approval->approval_level,
+
+                                'approval_key' =>
+                                    $approval->approval_key,
+
+                                'approver_id' =>
+                                    $approval->approver_id,
+
+                                'approver_name' =>
+                                    $approval->approver
+                                        ? encrypt_decrypt_db(
+                                            'dec',
+                                            $approval->approver->name,
+                                            $approval->approver->id
+                                        )
+                                        : null,
+
+                                'approver_jabatan_id' =>
+                                    $approval->approver_jabatan_id,
+
+                                'approver_jabatan_name' =>
+                                    $approval->approverJabatan?->name,
+
+                                'status' =>
+                                    $approval->status,
+
+                                'notes' =>
+                                    $approval->notes,
+
+                                'approved_at' =>
+                                    $approval->approved_at,
+                            ];
+                        }
+                    )
+                ];
+            }
+        );
+
+        return response()->json([
+
+            'status' => true,
+
+            'pagination' => [
+
+                'current_page' =>
+                    $paginated->currentPage(),
+
+                'last_page' =>
+                    $paginated->lastPage(),
+
+                'per_page' =>
+                    $paginated->perPage(),
+
+                'total' =>
+                    $paginated->total(),
+            ],
+
+            'data' => $collection,
+        ]);
     }
 }

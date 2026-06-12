@@ -308,3 +308,12 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('/sppd/realisasi/update',[SppdRealisasiController::class, 'update']
     )->middleware('permission:sppd.realisasi');
 });
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::get('/report-approvals', [TrReportApprovalController::class, 'index'])
+        ->middleware('permission:report.approval.list');
+    
+    Route::post('/reports/{id}/approval', [TrReportApprovalController::class, 'action'])
+        ->middleware('permission:report.approval');
+});

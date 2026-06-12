@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Mail\UserRegisteredMail;
 use App\Mail\UserRegistrationConfirmationMail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\MstJabatanApproval;
+use App\Models\TrReportApproval;
+use App\Models\TrSppdApproval;
 
 class AuthController extends Controller
 {
@@ -309,6 +312,19 @@ class AuthController extends Controller
             $decryptedPhone = $user->phone_number ? encrypt_decrypt_db('dec', $user->phone_number, $user->id) : null;
 
             $permissions = $user->role?->permissions?->pluck('slug');
+            $sppdKeys = DB::table('tr_sppd_approvals')
+                ->where('approver_jabatan_id', $user->jabatan_id)
+                ->pluck('approval_key');
+
+            $reportKeys = DB::table('tr_report_approvals')
+                ->where('approver_jabatan_id', $user->jabatan_id)
+                ->pluck('approval_key');
+
+            $approvalKeys = $sppdKeys
+                ->merge($reportKeys)
+                ->filter()
+                ->unique()
+                ->values();
 
             return json(200, 'true', 'Login Berhasil', 'Selamat datang!', [
                 'user' => [
@@ -341,6 +357,7 @@ class AuthController extends Controller
                         'updated_at' => $user->role->updated_at,
                     ] : null,
                     'permissions' => $permissions,
+                    'approval_keys' => $approvalKeys,
                 ],
                 'access_token' => [
                     'token' => $token,

@@ -236,6 +236,13 @@ class JabatanApprovalController extends Controller
                                     ),
 
                                     new OA\Property(
+                                        property: "approval_key",
+                                        type: "string",
+                                        nullable: true,
+                                        example: "finance_manager"
+                                    ),
+
+                                    new OA\Property(
                                         property: "target_jabatan_id",
                                         type: "integer",
                                         nullable: true,
@@ -321,6 +328,7 @@ class JabatanApprovalController extends Controller
                 'approval_order',
                 'approval_mode',
                 'target_level',
+                'approval_key',
                 'target_jabatan_id',
                 'target_department_id',
                 'target_role_id',
@@ -410,12 +418,28 @@ class JabatanApprovalController extends Controller
                 required: [
                     "jabatan_id",
                     "approval_flow_id",
-                    "approval_order"
+                    "approval_order",
+                    'approval_key',
+                    'target_jabatan_id',
+                    'target_department_id',
+                    'target_role_id',
+                    'target_user_id',
+                    'is_required',
+                    'can_reject',
+                    'can_revision',
                 ],
                 properties: [
                     new OA\Property(property: "jabatan_id", type: "integer", example: 1),
                     new OA\Property(property: "approval_flow_id", type: "integer", example: 1),
                     new OA\Property(property: "approval_order", type: "integer", example: 1),
+                    new OA\Property(property: "approval_key", type: "string", nullable: true, example: "finance_manager"),
+                    new OA\Property(property: "target_jabatan_id", type: "integer", nullable: true, example: 3),
+                    new OA\Property(property: "target_department_id", type: "integer", nullable: true, example: 1),
+                    new OA\Property(property: "target_role_id", type: "integer", nullable: true, example: 1),
+                    new OA\Property(property: "target_user_id", type: "integer", nullable: true, example: 1),
+                    new OA\Property(property: "is_required", type: "boolean", example: true),
+                    new OA\Property(property: "can_reject", type: "boolean", example: true),
+                    new OA\Property(property: "can_revision", type: "boolean", example: true),
                 ]
             )
         ),
@@ -432,6 +456,14 @@ class JabatanApprovalController extends Controller
             'jabatan_id' => 'required|exists:mst_jabatans,id',
             'approval_flow_id' => 'required|exists:mst_approval_flows,id',
             'approval_order' => 'required|integer|min:1',
+            'approval_key' => 'nullable|string|max:255',
+            'target_jabatan_id' => 'nullable|exists:mst_jabatans,id',
+            'target_department_id' => 'nullable|exists:mst_departments,id',
+            'target_role_id' => 'nullable|exists:mst_roles,id',
+            'target_user_id' => 'nullable|exists:users,id',
+            'is_required' => 'boolean',
+            'can_reject' => 'boolean',
+            'can_revision' => 'boolean',
         ]);
 
         $exists = MstJabatanApproval::where('approval_flow_id', $request->approval_flow_id)
@@ -450,6 +482,14 @@ class JabatanApprovalController extends Controller
             'jabatan_id' => $request->jabatan_id,
             'approval_flow_id' => $request->approval_flow_id,
             'approval_order' => $request->approval_order,
+            'approval_key' => $request->approval_key,
+            'target_jabatan_id' => $request->target_jabatan_id,
+            'target_department_id' => $request->target_department_id,
+            'target_role_id' => $request->target_role_id,
+            'target_user_id' => $request->target_user_id,
+            'is_required' => $request->is_required,
+            'can_reject' => $request->can_reject,
+            'can_revision' => $request->can_revision,
         ]);
 
         return response()->json([
@@ -480,6 +520,14 @@ class JabatanApprovalController extends Controller
                     new OA\Property(property: "jabatan_id", type: "integer"),
                     new OA\Property(property: "approval_flow_id", type: "integer"),
                     new OA\Property(property: "approval_order", type: "integer"),
+                    new OA\Property(property: "approval_key", type: "string", nullable: true),
+                    new OA\Property(property: "target_jabatan_id", type: "integer", nullable: true),
+                    new OA\Property(property: "target_department_id", type: "integer", nullable: true),
+                    new OA\Property(property: "target_role_id", type: "integer", nullable: true),
+                    new OA\Property(property: "target_user_id", type: "integer", nullable: true),
+                    new OA\Property(property: "is_required", type: "boolean"),
+                    new OA\Property(property: "can_reject", type: "boolean"),
+                    new OA\Property(property: "can_revision", type: "boolean"),
                 ]
             )
         ),
@@ -505,12 +553,28 @@ class JabatanApprovalController extends Controller
             'jabatan_id' => 'required|exists:mst_jabatans,id',
             'approval_flow_id' => 'required|exists:mst_approval_flows,id',
             'approval_order' => 'required|integer|min:1',
+            'approval_key' => 'nullable|string|max:255',
+            'target_jabatan_id' => 'nullable|exists:mst_jabatans,id',
+            'target_department_id' => 'nullable|exists:mst_departments,id',
+            'target_role_id' => 'nullable|exists:mst_roles,id',
+            'target_user_id' => 'nullable|exists:users,id',
+            'is_required' => 'boolean',
+            'can_reject' => 'boolean',
+            'can_revision' => 'boolean',
         ]);
 
         $data->update([
             'jabatan_id' => $request->jabatan_id,
             'approval_flow_id' => $request->approval_flow_id,
             'approval_order' => $request->approval_order,
+            'approval_key' => $request->approval_key,
+            'target_jabatan_id' => $request->target_jabatan_id,
+            'target_department_id' => $request->target_department_id,
+            'target_role_id' => $request->target_role_id,
+            'target_user_id' => $request->target_user_id,
+            'is_required' => $request->is_required,
+            'can_reject' => $request->can_reject,
+            'can_revision' => $request->can_revision,
         ]);
 
         return response()->json([
