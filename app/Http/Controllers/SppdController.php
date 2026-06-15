@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 use App\Traits\HasDynamicFilter;
 use App\Services\ApprovalService;
+use Illuminate\Support\Facades\Validator;
 
 class SppdController extends Controller
 {
@@ -1597,8 +1598,53 @@ class SppdController extends Controller
 
             $sppd = TrSppd::with([
                 'requester',
-                'approvals'
+                'approvals',
+                'peserta', 
+                'peserta.transportasi',
+                'peserta.penginapan'
             ])->findOrFail($id);
+
+            $validator = Validator::make($sppd->toArray(), [
+                'sppd_number' => 'required',
+                'jenis_dokumen' => 'required',
+                'kegiatan' => 'required',
+                'peserta.*.nama' => 'required',
+                'peserta.*.nip' => 'required',
+                'peserta.*.jabatan' => 'required',
+                'peserta.*.kota_asal' => 'required',
+                'peserta.*.kota_tujuan' => 'required',
+                'peserta.*.tempat_sppd' => 'required',
+                'peserta.*.dari_tanggal' => 'required',
+                'peserta.*.sampai_tanggal' => 'required',
+                'peserta.*.transportasi' => 'array',
+                'peserta.*.transportasi.*.jenis_transportasi' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.transportasi.*.nama_travel' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.transportasi.*.asal_keberangkatan' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.transportasi.*.tujuan_keberangkatan' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.transportasi.*.waktu' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.transportasi.*.estimasi_biaya' => 'required_with:peserta.*.transportasi|nullable|numeric',
+                'peserta.*.transportasi.*.keterangan' => 'nullable',
+                'peserta.*.transportasi.*.nama_lengkap' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.transportasi.*.no_hp' => 'required_with:peserta.*.transportasi|nullable',
+                'peserta.*.penginapan.*.jenis_penginapan' => 'required_with:peserta.*.penginapan|nullable',
+                'peserta.*.penginapan.*.nama_tempat' => 'required_with:peserta.*.penginapan|nullable',
+                'peserta.*.penginapan.*.lokasi' => 'required_with:peserta.*.penginapan|nullable',
+                'peserta.*.penginapan.*.check_in' => 'required_with:peserta.*.penginapan|nullable',
+                'peserta.*.penginapan.*.check_out' => 'required_with:peserta.*.penginapan|nullable',
+                'peserta.*.penginapan.*.estimasi_biaya' => 'required_with:peserta.*.penginapan|nullable|numeric',
+                'peserta.*.penginapan.*.keterangan' =>  'nullable',
+                'peserta.*.penginapan.*.nama_lengkap' => 'required_with:peserta.*.penginapan|nullable',
+                'peserta.*.penginapan.*.no_hp' => 'required_with:peserta.*.penginapan|nullable',
+            ]);
+
+            if ($validator->fails()) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data SPPD belum lengkap',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
             /*
             |----------------------------------------

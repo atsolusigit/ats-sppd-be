@@ -5,14 +5,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\MstApprovalFlow;
 use OpenApi\Attributes as OA;
+use App\Traits\HasDynamicFilter;
 
 class ApprovalFlowController extends Controller
 {
+    use HasDynamicFilter;
     #[OA\Get(
         path: "/api/approval-flows",
         tags: ["Approval Flow"],
         summary: "Get all approval flows",
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "module",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string"),
+                description: "Filter by module (e.g. sppd)"
+            ),
+            new OA\Parameter(
+                name: "department_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer"),
+                description: "Filter by department ID"
+            )
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -20,17 +38,42 @@ class ApprovalFlowController extends Controller
             )
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        $data = MstApprovalFlow::with([
+        $query = MstApprovalFlow::with([
             'department',
             'jabatanApprovals'
-        ])->get();
+        ]);
+
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            [
+                'id',
+                'department_id',
+                'status',
+                'module'
+            ],
+            [
+                'name',
+                'module'
+            ]
+        );
+
+        $data = $query->paginate(
+            $request->get('per_page', 10)
+        );
 
         return response()->json([
             'status' => true,
             'message' => 'Approval flows fetched successfully',
-            'data' => $data
+            'pagination' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+            ],
+            'data' => $data->items()
         ]);
     }
 

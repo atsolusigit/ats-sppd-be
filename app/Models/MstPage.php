@@ -11,6 +11,9 @@ class MstPage extends Model
     protected $fillable = [
         'name',
         'head_url',
+        'parent_id',
+        'icon',
+        'sort_order',
         'is_web',
         'is_mobile',
         'created_by',
@@ -19,6 +22,9 @@ class MstPage extends Model
         'user_id',
     ];
 
+    /**
+     * User Page Mapping
+     */
     public function users()
     {
         return $this->belongsToMany(
@@ -29,12 +35,41 @@ class MstPage extends Model
         );
     }
 
-   public function roles()
-{
-    return $this->belongsToMany(MstRole::class, 'tr_role_page', 'page_id', 'role_id')
-                ->withPivot('access')
-                ->withTimestamps();
-}
+    /**
+     * Role Page Mapping
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(
+            MstRole::class,
+            'tr_role_page',
+            'page_id',
+            'role_id'
+        )
+        ->withPivot('access')
+        ->withTimestamps();
+    }
 
+    /**
+     * Parent Menu
+     */
+    public function parent()
+    {
+        return $this->belongsTo(
+            MstPage::class,
+            'parent_id'
+        );
+    }
 
+    /**
+     * Child Menus
+     */
+    public function children()
+    {
+        return $this->hasMany(
+            MstPage::class,
+            'parent_id'
+        )
+        ->orderBy('sort_order');
+    }
 }

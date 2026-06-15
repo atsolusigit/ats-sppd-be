@@ -62,6 +62,20 @@ class PageController extends Controller
             ),
 
             new OA\Parameter(
+                name: "parent_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            ),
+
+            new OA\Parameter(
+                name: "sort_order",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            ),
+
+            new OA\Parameter(
                 name: "search",
                 in: "query",
                 required: false,
@@ -110,7 +124,8 @@ class PageController extends Controller
     {
         $query = MstPage::with([
             'roles',
-            'users'
+            'parent',
+            'children'
         ]);
 
         $query = $this->applyFilters(
@@ -120,10 +135,10 @@ class PageController extends Controller
                 'id',
                 'name',
                 'head_url',
+                'parent_id',
                 'is_web',
                 'is_mobile',
                 'status',
-                'user_id',
                 'created_by',
             ],
             [
@@ -176,7 +191,11 @@ class PageController extends Controller
 
     public function show($id)
     {
-        $data = MstPage::with(['roles', 'users'])->find($id);
+        $data = MstPage::with([
+            'roles',
+            'parent',
+            'children'
+        ])->find($id);
 
         if (!$data) {
             return response()->json([
@@ -238,9 +257,21 @@ class PageController extends Controller
                     ),
 
                     new OA\Property(
-                        property: "user_id",
+                        property: "parent_id",
                         type: "integer",
                         nullable: true,
+                        example: 1
+                    ),
+
+                    new OA\Property(
+                        property: "icon",
+                        type: "string",
+                        example: "fa-solid fa-file"
+                    ),
+
+                    new OA\Property(
+                        property: "sort_order",
+                        type: "integer",
                         example: 1
                     ),
                 ]
@@ -257,11 +288,13 @@ class PageController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'head_url' => 'required|string|max:255',
+            'head_url' => 'nullable|string|max:255',
+            'parent_id' => 'nullable|exists:mst_page,id',
+            'icon' => 'nullable|string|max:255',
+            'sort_order' => 'nullable|integer',
             'is_web' => 'boolean',
             'is_mobile' => 'boolean',
             'status' => 'boolean',
-            'user_id' => 'nullable|exists:users,id',
         ]);
 
         $data = MstPage::create([
@@ -270,7 +303,9 @@ class PageController extends Controller
             'is_web' => $request->is_web ?? true,
             'is_mobile' => $request->is_mobile ?? false,
             'status' => $request->status ?? true,
-            'user_id' => $request->user_id,
+            'parent_id' => $request->parent_id,
+            'icon' => $request->icon,
+            'sort_order' => $request->sort_order,
             'created_by' => auth()->id(),
         ]);
 
@@ -325,9 +360,19 @@ class PageController extends Controller
                     ),
 
                     new OA\Property(
-                        property: "user_id",
+                        property: "parent_id",
                         type: "integer",
                         nullable: true
+                    ),
+    
+                    new OA\Property(
+                        property: "icon",
+                        type: "string"
+                    ),
+
+                    new OA\Property(
+                        property: "sort_order",
+                        type: "integer"
                     ),
                 ]
             )
@@ -357,7 +402,7 @@ class PageController extends Controller
             'is_web' => 'boolean',
             'is_mobile' => 'boolean',
             'status' => 'boolean',
-            'user_id' => 'nullable|exists:users,id',
+
         ]);
 
         $data->update([
@@ -366,7 +411,9 @@ class PageController extends Controller
             'is_web' => $request->is_web ?? $data->is_web,
             'is_mobile' => $request->is_mobile ?? $data->is_mobile,
             'status' => $request->status ?? $data->status,
-            'user_id' => $request->user_id ?? $data->user_id,
+            'parent_id' => $request->parent_id ?? $data->parent_id,
+            'icon' => $request->icon ?? $data->icon,
+            'sort_order' => $request->sort_order ?? $data->sort_order,
         ]);
 
         return response()->json([

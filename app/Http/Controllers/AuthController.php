@@ -361,7 +361,7 @@ class AuthController extends Controller
                         'created_at' => $user->role->created_at,
                         'updated_at' => $user->role->updated_at,
                     ] : null,
-                    'permissions' => $permissions,
+                    // 'permissions' => $permissions,
                     'pages' => $pages,
                     'approval_keys' => $approvalKeys,
                 ],

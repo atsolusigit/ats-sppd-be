@@ -12,6 +12,26 @@
                 ],
                 "summary": "Get all approval flows",
                 "operationId": "2204a709e99a9f2b502036f17b21042a",
+                "parameters": [
+                    {
+                        "name": "module",
+                        "in": "query",
+                        "description": "Filter by module (e.g. sppd)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "department_id",
+                        "in": "query",
+                        "description": "Filter by department ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -2072,6 +2092,22 @@
                         }
                     },
                     {
+                        "name": "parent_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sort_order",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
                         "name": "search",
                         "in": "query",
                         "required": false,
@@ -2163,10 +2199,18 @@
                                         "type": "boolean",
                                         "example": true
                                     },
-                                    "user_id": {
+                                    "parent_id": {
                                         "type": "integer",
                                         "example": 1,
                                         "nullable": true
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "fa-solid fa-file"
+                                    },
+                                    "sort_order": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -2254,9 +2298,15 @@
                                     "status": {
                                         "type": "boolean"
                                     },
-                                    "user_id": {
+                                    "parent_id": {
                                         "type": "integer",
                                         "nullable": true
+                                    },
+                                    "icon": {
+                                        "type": "string"
+                                    },
+                                    "sort_order": {
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
