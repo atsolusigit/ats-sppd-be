@@ -53,4 +53,11 @@ class TrSppdTransportasi extends Model
             'participant_id'
         );
     }
-}
+
+    public function attachments()
+    {
+        return $this->hasMany(TrAttachment::class, 'reference_id')
+            ->where('category', 'transport')
+            ->where('module', 'realisasi');
+    }
+    }

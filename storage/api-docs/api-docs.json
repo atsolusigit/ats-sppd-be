@@ -245,6 +245,241 @@
                 ]
             }
         },
+        "/api/attachments": {
+            "get": {
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "List attachments",
+                "description": "GET LIST ATTACHMENT BY SPPD",
+                "operationId": "3d2efaeda133c99c3c0192389f5a6ef5",
+                "parameters": [
+                    {
+                        "name": "sppd_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "module",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sppd",
+                                "realisasi",
+                                "report"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "transport",
+                                "accommodation",
+                                "general"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Upload file atau link attachment (SPPD / Realisasi / Report)",
+                "description": "STORE attachment (file / link)",
+                "operationId": "ce1f73699a3fcd9230ed2a70d477dc6d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "sppd_id",
+                                    "module",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "sppd_id": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "reference_id": {
+                                        "type": "integer",
+                                        "example": 55,
+                                        "nullable": true
+                                    },
+                                    "module": {
+                                        "type": "string",
+                                        "example": "realisasi",
+                                        "enum": [
+                                            "sppd",
+                                            "realisasi",
+                                            "report"
+                                        ]
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "transport",
+                                        "enum": [
+                                            "transport",
+                                            "accommodation",
+                                            "general"
+                                        ]
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "file",
+                                        "enum": [
+                                            "file",
+                                            "link"
+                                        ]
+                                    },
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "url": {
+                                        "type": "string",
+                                        "example": "https://drive.google.com/file/d/xxx/view"
+                                    },
+                                    "file_name": {
+                                        "type": "string",
+                                        "example": "ticket.pdf"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Attachment created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attachments/{id}": {
+            "get": {
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Get detail attachment",
+                "description": "DETAIL",
+                "operationId": "bbe2d2185b97b2716f9e2269d2399452",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Delete attachment",
+                "description": "DELETE",
+                "operationId": "e5796e0e4d3a3f40f6eff683683b013e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attachments/{id}/download": {
+            "get": {
+                "tags": [
+                    "Attachments"
+                ],
+                "summary": "Download file attachment",
+                "description": "DOWNLOAD FILE",
+                "operationId": "d0fc2b5c224543f57f05803ef4e034a8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File download"
+                    },
+                    "400": {
+                        "description": "Not a file"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -5102,6 +5337,10 @@
         {
             "name": "Approval Flow",
             "description": "Approval Flow"
+        },
+        {
+            "name": "Attachments",
+            "description": "Attachments"
         },
         {
             "name": "Auth",

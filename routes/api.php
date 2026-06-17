@@ -17,6 +17,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SppdRealisasiController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RolePageController;
+use App\Http\Controllers\AttachmentController;
 
 // ============================
 //  Auth Routes (tanpa token)
@@ -364,4 +365,36 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::delete('/role-pages/{id}', [RolePageController::class, 'destroy'])
         ->middleware('permission:role_page.delete');
+});
+
+
+Route::middleware(['auth:api'])->group(function () {
+
+    Route::prefix('attachments')->group(function () {
+
+        Route::get(
+            '/',
+            [AttachmentController::class, 'index']
+        )->middleware('permission:sppd.view');
+
+        Route::post(
+            '/',
+            [AttachmentController::class, 'store']
+        )->middleware('permission:sppd.create');
+
+        Route::get(
+            '/{id}',
+            [AttachmentController::class, 'show']
+        )->middleware('permission:sppd.view');
+
+        Route::get(
+            '/{id}/download',
+            [AttachmentController::class, 'download']
+        )->middleware('permission:sppd.view');
+
+        Route::delete(
+            '/{id}',
+            [AttachmentController::class, 'destroy']
+        )->middleware('permission:sppd.delete');
+    });
 });

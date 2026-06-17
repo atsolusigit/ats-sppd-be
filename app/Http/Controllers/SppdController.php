@@ -148,9 +148,10 @@ class SppdController extends Controller
             'peserta',
             'approval_flow',
             'approvals',
-            'peserta.transportasi',
-            'peserta.penginapan',
-            'report.approvals'
+            'peserta.transportasi.attachments',
+            'peserta.penginapan.attachments',
+            'report.approvals',
+            'sppdAttachments'
         ]);
 
         /*
@@ -328,7 +329,18 @@ class SppdController extends Controller
                         'approved_at' => $a->approved_at,
                     ];
                 }),
-
+                'attachment' => $item->sppdAttachments->map(function ($l) {
+                    return [
+                        'id' => $l->id,
+                        'type' => $l->type, // file / link
+                        'file_name' => $l->file_name,
+                        'attachment_url' => $l->file_path
+                            ? asset('storage/' . $l->file_path)
+                            : null,
+                        'created_at' => $l->created_at,
+                    ];
+                }),
+ 
                 'report' => $item->report ? [
 
                     'id' => $item->report->id,
@@ -426,10 +438,11 @@ class SppdController extends Controller
         $data = TrSppd::with([
             'requester',
             'approval_flow',
-            'peserta.transportasi',
-            'peserta.penginapan',
             'approvals',
-            'report.approvals'
+            'report.approvals',
+            'peserta.transportasi.attachments',
+            'peserta.penginapan.attachments',
+            'sppdAttachments'
         ])->findOrFail($id);
 
         /*
@@ -478,6 +491,18 @@ class SppdController extends Controller
                         $data->requester->id
                     ),
                 ] : null,
+
+                'attachment' => $data->sppdAttachments->map(function ($l) {
+                    return [
+                        'id' => $l->id,
+                        'type' => $l->type, // file / link
+                        'file_name' => $l->file_name,
+                        'attachment_url' => $l->file_path
+                            ? asset('storage/' . $l->file_path)
+                            : null,
+                        'created_at' => $l->created_at,
+                    ];
+                }),
 
                 'report' => $data->report ? [
 

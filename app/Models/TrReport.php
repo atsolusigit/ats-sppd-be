@@ -40,4 +40,10 @@ class TrReport extends Model
             'report_id'
         );
     }
-}
+
+    public function attachments()
+    {
+        return $this->hasMany(TrAttachment::class, 'sppd_id')
+            ->where('module', 'report');
+    }
+    }

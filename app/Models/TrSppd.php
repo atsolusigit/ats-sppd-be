@@ -35,9 +35,6 @@ class TrSppd extends Model
         'total_transport',
         'total_accommodation',
         'grand_total',
-
-        'created_by',
-        'updated_by',
         
         'submitted_at',
         'created_by',
@@ -113,6 +110,25 @@ class TrSppd extends Model
         );
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(TrAttachment::class, 'sppd_id');
+    }
+
+    public function sppdAttachments()
+    {
+        return $this->attachments()->where('module', 'sppd');
+    }
+
+    public function reportAttachments()
+    {
+        return $this->attachments()->where('module', 'report');
+    }
+
+    public function realisasiAttachments()
+    {
+        return $this->attachments()->where('module', 'realisasi');
+}
 
 
     /*
